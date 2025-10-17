@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pago - Sistema POS Experto</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f9fafb;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            padding: 16px 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            width: 28px;
+            height: 28px;
+            background: #d1d5db;
+            border-radius: 4px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .help-button {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .user-icon {
+            width: 32px;
+            height: 32px;
+            background: #d1d5db;
+            border-radius: 50%;
+        }
+
+        /* Main content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            padding: 24px;
+            gap: 24px;
+            overflow: hidden;
+        }
+
+        .payment-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 32px;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            background: none;
+            border: none;
+            font-size: 32px;
+            color: #6b7280;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .close-button:hover {
+            color: #374151;
+        }
+
+        /* Left section - Order summary */
+        .order-summary {
+            width: 350px;
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            height: fit-content;
+        }
+
+        .summary-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .summary-tab {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border: 1px solid #d1d5db;
+            background: white;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .summary-tab:hover {
+            background: #f9fafb;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 16px 0;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 14px;
+        }
+
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 20px;
+            margin-top: 20px;
+            border-top: 1px solid #d1d5db;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        /* Right section - Payment */
+        .payment-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .payment-options {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #6b7280;
+            margin-bottom: 16px;
+        }
+
+        .currency-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .currency-tab {
+            padding: 8px 16px;
+            background: white;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .currency-tab.active {
+            background: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+
+        .quick-amounts {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .amount-button {
+            padding: 12px;
+            background: white;
+            border: 2px solid #10b981;
+            color: #10b981;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .amount-button:hover {
+            background: #dcfce7;
+        }
+
+        .payment-input-section {
+            margin-bottom: 24px;
+        }
+
+        .input-label {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .payment-input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 20px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .payment-totals {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .total-item {
+            text-align: center;
+        }
+
+        .total-label {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .total-amount {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .methods-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .method-card {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px 16px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .method-card:hover {
+            border-color: #10b981;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .method-card.selected {
+            border-color: #10b981;
+            background: #dcfce7;
+        }
+
+        .method-check {
+            display: none;
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            width: 24px;
+            height: 24px;
+            background: #10b981;
+            border-radius: 50%;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .method-card.selected .method-check {
+            display: flex;
+        }
+
+        .method-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 12px;
+            border-radius: 8px;
+        }
+
+        .method-name {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .method-number {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .action-buttons {
+            display: none;
+            gap: 12px;
+        }
+
+        .action-buttons.active {
+            display: flex;
+        }
+
+        .btn-secondary {
+            flex: 1;
+            padding: 16px;
+            background: white;
+            border: 2px solid #10b981;
+            color: #10b981;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+            background: #dcfce7;
+        }
+
+        .btn-primary {
+            flex: 1;
+            padding: 16px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background: #059669;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-left">
+                <div class="logo"></div>
+                <span style="font-weight: 600; font-size: 14px;">Wally</span>
+                <span style="font-size: 13px; color: #6b7280;">Plan Crece</span>
+            </div>
+            <div class="header-right">
+                <button class="help-button">? ¡Ayuda!</button>
+                <div class="user-icon"></div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <button class="close-button" onclick="goBack()">×</button>
+            
+            <h1 class="payment-title">Pago</h1>
+
+            <div style="display: flex; gap: 32px; width: 100%; max-width: 1400px; margin: 0 auto;">
+                <!-- Order Summary -->
+                <div class="order-summary">
+                    <div class="summary-tabs">
+                        <button class="summary-tab">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="9" cy="21" r="1"></circle>
+                                <circle cx="20" cy="21" r="1"></circle>
+                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                            </svg>
+                            Nueva cuenta
+                        </button>
+                        <button class="summary-tab">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            Cliente
+                        </button>
+                    </div>
+
+                    <div id="orderSummary">
+                        <!-- Items will be loaded here -->
+                    </div>
+
+                    <div class="summary-total">
+                        <span>Importe Total</span>
+                        <span id="importeTotal">S/ 0.00</span>
+                    </div>
+                </div>
+
+                <!-- Payment Section -->
+                <div class="payment-section">
+                    <div class="payment-options">
+                        <!-- Currency Type -->
+                        <div class="section-title">Tipo de cambio</div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <div style="font-size: 13px;">3.494 (Compra) - 3.502 (Venta)</div>
+                            <div class="currency-tabs">
+                                <button class="currency-tab active">Soles</button>
+                                <button class="currency-tab">Dólares</button>
+                            </div>
+                        </div>
+
+                        <!-- Quick Amount Selection -->
+                        <div class="section-title">Efectivo rápido</div>
+                        <div class="quick-amounts">
+                            <button class="amount-button" onclick="setAmount(43)">S/ 43.00</button>
+                            <button class="amount-button" onclick="setAmount(45)">S/ 45.00</button>
+                            <button class="amount-button" onclick="setAmount(50)">S/ 50.00</button>
+                            <button class="amount-button" onclick="setAmount(100)">S/ 100.00</button>
+                        </div>
+
+                        <!-- Payment Input -->
+                        <div class="payment-input-section">
+                            <label class="input-label">Ingresa el monto</label>
+                            <input 
+                                type="text" 
+                                class="payment-input" 
+                                id="paymentAmount"
+                                value="S/ 43.00"
+                                placeholder="S/ 0.00"
+                            />
+                        </div>
+
+                        <!-- Totals -->
+                        <div class="payment-totals">
+                            <div class="total-item">
+                                <div class="total-label">Importe total</div>
+                                <div class="total-amount" id="totalDisplay">S/ 43.00</div>
+                            </div>
+                            <div class="total-item">
+                                <div class="total-label">Vuelto</div>
+                                <div class="total-amount" id="changeDisplay" style="color: #9ca3af;">S/ 0.00</div>
+                            </div>
+                        </div>
+
+                        <!-- Payment Methods -->
+                        <div class="methods-title">Selecciona un método de pago</div>
+                        <div class="payment-methods">
+                            <div class="method-card" onclick="selectMethod('efectivo', this)">
+                                <div class="method-check">✓</div>
+                                <div class="method-icon" style="background: #10b981;"></div>
+                                <div class="method-name">Efectivo</div>
+                            </div>
+
+                            <div class="method-card" onclick="selectMethod('yape', this)">
+                                <div class="method-check">✓</div>
+                                <div class="method-icon" style="background: #7c3aed;"></div>
+                                <div class="method-name">YAPE</div>
+                                <div class="method-number">934510010</div>
+                            </div>
+
+                            <div class="method-card" onclick="selectMethod('plin', this)">
+                                <div class="method-check">✓</div>
+                                <div class="method-icon" style="background: #06b6d4;"></div>
+                                <div class="method-name">PLIN</div>
+                                <div class="method-number">934510010</div>
+                            </div>
+
+                            <div class="method-card" onclick="selectMethod('pedidos-ya', this)">
+                                <div class="method-check">✓</div>
+                                <div class="method-icon" style="background: #10b981;"></div>
+                                <div class="method-name">Pedidos Ya</div>
+                            </div>
+
+                            <div class="method-card" onclick="selectMethod('rappi', this)">
+                                <div class="method-check">✓</div>
+                                <div class="method-icon" style="background: #10b981;"></div>
+                                <div class="method-name">Rappi</div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="action-buttons" id="actionButtons">
+                            <button class="btn-secondary" onclick="finalizarCompra('nota')">
+                                Nota de venta
+                            </button>
+                            <button class="btn-primary" onclick="finalizarCompra('electronico')">
+                                Comprobante electrónico
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedMethod = null;
+        let totalAmount = 43.00;
+
+        function loadOrderData() {
+            const cartData = localStorage.getItem('posCartExperto');
+            let cart = [];
+            
+            if (cartData) {
+                cart = JSON.parse(cartData);
+            } else {
+                // Datos de ejemplo
+                cart = [
+                    { name: 'Alpaca Pang 2 piezas', quantity: 1, price: 8.00 },
+                    { name: 'Alpaca Pang 4 piezas', quantity: 1, price: 15.00 },
+                    { name: 'Alpaca Pang 6 piezas', quantity: 1, price: 20.00 }
+                ];
+            }
+
+            const summaryEl = document.getElementById('orderSummary');
+            let total = 0;
+            
+            summaryEl.innerHTML = cart.map(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                return `
+                    <div class="summary-item">
+                        <div>${item.quantity} ${item.name} (${item.quantity} Un)</div>
+                        <div style="font-weight: 600;">S/ ${itemTotal.toFixed(2)}</div>
+                    </div>
+                `;
+            }).join('');
+
+            totalAmount = total;
+            document.getElementById('importeTotal').textContent = `S/ ${total.toFixed(2)}`;
+            document.getElementById('totalDisplay').textContent = `S/ ${total.toFixed(2)}`;
+            updateChange();
+        }
+
+        function setAmount(amount) {
+            document.getElementById('paymentAmount').value = `S/ ${amount.toFixed(2)}`;
+            updateChange();
+        }
+
+        function updateChange() {
+            const input = document.getElementById('paymentAmount').value;
+            const paidAmount = parseFloat(input.replace('S/', '').trim()) || 0;
+            const change = Math.max(0, paidAmount - totalAmount);
+            document.getElementById('changeDisplay').textContent = `S/ ${change.toFixed(2)}`;
+        }
+
+        function selectMethod(method, element) {
+            selectedMethod = method;
+            
+            // Remove selection from all methods
+            document.querySelectorAll('.method-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Add selection to clicked method
+            element.classList.add('selected');
+            
+            // Show action buttons
+            document.getElementById('actionButtons').classList.add('active');
+        }
+
+        function finalizarCompra(tipo) {
+            if (!selectedMethod) {
+                alert('Por favor selecciona un método de pago');
+                return;
+            }
+
+            const tipoTexto = tipo === 'electronico' ? 'Comprobante Electrónico' : 'Nota de Venta';
+            alert(`¡Compra finalizada!\nTipo: ${tipoTexto}\nMétodo: ${selectedMethod}`);
+            
+            localStorage.removeItem('posCartExperto');
+            window.location.href = 'index-experto.html';
+        }
+
+        function goBack() {
+            window.location.href = 'index-experto.html';
+        }
+
+        // Update change when input changes
+        document.addEventListener('DOMContentLoaded', function() {
+            const paymentInput = document.getElementById('paymentAmount');
+            paymentInput.addEventListener('input', updateChange);
+            loadOrderData();
+        });
+    </script>
+</body>
+</html>

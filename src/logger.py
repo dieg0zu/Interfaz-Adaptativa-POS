@@ -3,7 +3,6 @@ from datetime import datetime
 import os
 
 def registrar_evento(tipo_evento, duracion, exito=True):
-    """Registra eventos del usuario (acciones, errores, etc.) en el dataset."""
     os.makedirs("data", exist_ok=True)
 
     archivo = "data/dataset_pos.csv"

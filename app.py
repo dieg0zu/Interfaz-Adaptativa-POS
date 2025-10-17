@@ -8,7 +8,7 @@ app = Flask(__name__)
 # Página inicial
 @app.route("/")
 def home():
-    return render_template("interfaz_base.html")
+    return render_template("interfaz_estática.html")
 
 @app.route("/evento", methods=["POST"])
 def evento():

@@ -1,0 +1,651 @@
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wally Punto de Venta</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        .header {
+            background-color: white;
+            padding: 12px 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background-color: #4CAF50;
+            border-radius: 50%;
+        }
+
+        .company-info {
+            padding: 20px;
+            background-color: white;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .company-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .company-id {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .main-container {
+            display: flex;
+            height: calc(100vh - 120px);
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: white;
+            border-right: 1px solid #e0e0e0;
+            overflow-y: auto;
+        }
+
+        .sidebar-item {
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .sidebar-item.active {
+            background-color: #e8f5e9;
+            border-left-color: #4CAF50;
+            color: #2e7d32;
+            font-weight: 500;
+        }
+
+        .content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .right-panel {
+            width: 400px;
+            background-color: white;
+            border-left: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #4CAF50;
+        }
+
+        .top-btn {
+            padding: 10px 20px;
+            border: 1px solid #ddd;
+            background-color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .top-btn:hover {
+            background-color: #f5f5f5;
+        }
+
+        .top-btn.active {
+            background-color: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .category-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .category-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .category-header {
+            width: 100%;
+            height: 40px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+        }
+
+        .category-header.yellow { background-color: #FFC107; }
+        .category-header.blue { background-color: #2196F3; }
+        .category-header.pink { background-color: #E91E63; }
+        .category-header.dark { background-color: #424242; }
+        .category-header.green { background-color: #4CAF50; }
+        .category-header.red { background-color: #F44336; }
+        .category-header.cyan { background-color: #00BCD4; }
+        .category-header.lightpink { background-color: #F48FB1; }
+
+        .category-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .category-count {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .product-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .product-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .product-icon {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px 4px 0 0;
+            margin: -15px -15px 10px -15px;
+        }
+
+        .product-name {
+            font-size: 13px;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .product-price {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .sale-header {
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .new-sale-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .sale-items {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .empty-illustration {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 20px;
+            background-color: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        .sale-footer {
+            padding: 20px;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary {
+            background-color: white;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background-color: #f5f5f5;
+        }
+
+        .btn-primary {
+            background-color: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+
+        .btn-primary:hover {
+            background-color: #45a049;
+        }
+
+        .sale-item {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sale-item-info {
+            flex: 1;
+        }
+
+        .sale-item-name {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .sale-item-price {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .sale-item-note {
+            margin-top: 8px;
+            padding: 8px;
+            background-color: #fff3cd;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #856404;
+        }
+
+        .sale-item-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .icon-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #ddd;
+            background-color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .icon-btn:hover {
+            background-color: #f5f5f5;
+        }
+
+        .note-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-top: 8px;
+            font-family: inherit;
+        }
+
+        .total-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 24px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <div class="logo-icon"></div>
+            <span>wally</span>
+            <span style="color: #666; font-weight: 400;">Plan Crece</span>
+        </div>
+        <div style="color: #4CAF50; font-weight: 500;">¡Ayuda!</div>
+    </div>
+
+    <div class="company-info">
+        <div class="company-name">J & Y NEGOCIOS S.A.C.</div>
+        <div class="company-id">20608507371</div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <div class="sidebar-item active">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span>📍</span>
+                    <span>Punto de venta</span>
+                </div>
+            </div>
+            <div class="sidebar-item" style="padding-left: 50px;">Caja</div>
+            <div class="sidebar-item" style="padding-left: 50px;">Cuentas guardadas</div>
+            <div class="sidebar-item" style="padding-left: 50px;">Historial de ventas</div>
+            <div class="sidebar-item" style="padding-left: 50px;">Movimientos de caja</div>
+            <div class="sidebar-item" style="padding-left: 50px;">Apertura y cierre de caja</div>
+            <div class="sidebar-item" style="padding-left: 50px;">Reporte cierre/turno</div>
+            <div class="sidebar-item" style="padding-left: 50px;">Estadísticas de venta</div>
+            <div class="sidebar-item" style="padding-left: 50px;">Academia Wally</div>
+            <div class="sidebar-item" style="padding-left: 50px;">Impresoras</div>
+        </div>
+
+        <div class="content">
+            <div class="top-bar">
+                <button class="top-btn">
+                    <span>🔍</span>
+                    <span>Buscar</span>
+                </button>
+                <button class="top-btn active">
+                    <span>❤️</span>
+                    <span>Favoritos</span>
+                </button>
+                <button class="top-btn">
+                    <span>⚙️</span>
+                </button>
+                <button class="top-btn">
+                    <span>📦</span>
+                    <span>Productos</span>
+                </button>
+                <button class="top-btn">
+                    <span>📂</span>
+                    <span>Categorías</span>
+                </button>
+                <button class="top-btn">
+                    <span>🛒</span>
+                    <span>Venta li</span>
+                </button>
+            </div>
+
+            <div class="categories-grid">
+                <div class="category-card">
+                    <div class="category-header yellow"></div>
+                    <div class="category-name">Alpaca Pang</div>
+                    <div class="category-count">16 Productos</div>
+                </div>
+                <div class="category-card">
+                    <div class="category-header blue"></div>
+                    <div class="category-name">Bingsu</div>
+                    <div class="category-count">12 Productos</div>
+                </div>
+                <div class="category-card">
+                    <div class="category-header pink"></div>
+                    <div class="category-name">Bubble tea</div>
+                    <div class="category-count">69 Productos</div>
+                </div>
+                <div class="category-card">
+                    <div class="category-header dark"></div>
+                    <div class="category-name">Bebidas</div>
+                    <div class="category-count">10 Productos</div>
+                </div>
+                <div class="category-card">
+                    <div class="category-header green"></div>
+                    <div class="category-name">K-food</div>
+                    <div class="category-count">12 Productos</div>
+                </div>
+                <div class="category-card">
+                    <div class="category-header green"></div>
+                    <div class="category-name">Hankki</div>
+                    <div class="category-count">13 Productos</div>
+                </div>
+                <div class="category-card">
+                    <div class="category-header red"></div>
+                    <div class="category-name">Productos Coreanos</div>
+                    <div class="category-count">10 Productos</div>
+                </div>
+                <div class="category-card">
+                    <div class="category-header lightpink"></div>
+                    <div class="category-name">ETC</div>
+                    <div class="category-count">10 Productos</div>
+                </div>
+                <div class="category-card">
+                    <div class="category-header red"></div>
+                    <div class="category-name">Pedidos Ya</div>
+                    <div class="category-count">25 Productos</div>
+                </div>
+                <div class="category-card">
+                    <div class="category-header green"></div>
+                    <div class="category-name">RAPPI</div>
+                    <div class="category-count">39 Productos</div>
+                </div>
+            </div>
+
+            <div class="products-grid">
+                <div class="product-card" onclick="addProduct('Alpy Pang-Full queso', 14.00)">
+                    <div class="product-icon yellow"></div>
+                    <div class="product-name">Alpy Pang-Full queso</div>
+                    <div class="product-price">S/ 14.00</div>
+                </div>
+                <div class="product-card" onclick="addProduct('Pollo Frito Coreano', 18.00)">
+                    <div class="product-icon cyan"></div>
+                    <div class="product-name">Pollo Frito Coreano ...</div>
+                    <div class="product-price">S/ 18.00</div>
+                </div>
+                <div class="product-card" onclick="addProduct('Tteokbokki', 35.00)">
+                    <div class="product-icon cyan"></div>
+                    <div class="product-name">Tteokbokki</div>
+                    <div class="product-price">S/ 35.00</div>
+                </div>
+                <div class="product-card" onclick="addProduct('Promo Coco & 1 Alpaca Pang', 9.90)">
+                    <div class="product-icon pink"></div>
+                    <div class="product-name">Promo Coco & 1 Alpaca Pang</div>
+                    <div class="product-price">S/ 9.90</div>
+                </div>
+                <div class="product-card" onclick="addProduct('Combo De Vuelta (Ramen)', 28.00)">
+                    <div class="product-icon pink"></div>
+                    <div class="product-name">Combo De Vuelta (Ram...</div>
+                    <div class="product-price">S/ 28.00</div>
+                </div>
+                <div class="product-card" onclick="addProduct('Alpy Pang-Tocino & Queso', 15.00)">
+                    <div class="product-icon yellow"></div>
+                    <div class="product-name">Alpy Pang-Tocino & Queso</div>
+                    <div class="product-price">S/ 15.00</div>
+                </div>
+                <div class="product-card" onclick="addProduct('Pollo Frito Coreano', 26.00)">
+                    <div class="product-icon cyan"></div>
+                    <div class="product-name">Pollo Frito Coreano ...</div>
+                    <div class="product-price">S/ 26.00</div>
+                </div>
+                <div class="product-card" onclick="addProduct('Combo Primer Día (Mix)', 18.00)">
+                    <div class="product-icon pink"></div>
+                    <div class="product-name">Combo Primer Día (Mi...</div>
+                    <div class="product-price">S/ 18.00</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="sale-header">
+                <div class="new-sale-title">Nueva cuenta</div>
+            </div>
+            <div class="sale-items" id="saleItems">
+                <div class="empty-state">
+                    <div class="empty-illustration"></div>
+                    <div>Aún no agregas productos a tu venta</div>
+                </div>
+            </div>
+            <div class="sale-footer">
+                <button class="btn btn-secondary">Guardar</button>
+                <button class="btn btn-primary">Cobrar S/ 0.00</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let saleItems = [];
+        let itemIdCounter = 0;
+
+        function addProduct(name, price) {
+            const item = {
+                id: itemIdCounter++,
+                name: name,
+                price: price,
+                note: ''
+            };
+            saleItems.push(item);
+            renderSaleItems();
+        }
+
+        function removeProduct(id) {
+            saleItems = saleItems.filter(item => item.id !== id);
+            renderSaleItems();
+        }
+
+        function toggleNote(id) {
+            const noteInput = document.getElementById(`note-${id}`);
+            if (noteInput.style.display === 'none' || !noteInput.style.display) {
+                noteInput.style.display = 'block';
+                noteInput.focus();
+            } else {
+                noteInput.style.display = 'none';
+            }
+        }
+
+        function updateNote(id, value) {
+            const item = saleItems.find(item => item.id === id);
+            if (item) {
+                item.note = value;
+            }
+        }
+
+        function renderSaleItems() {
+            const container = document.getElementById('saleItems');
+            
+            if (saleItems.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-illustration"></div>
+                        <div>Aún no agregas productos a tu venta</div>
+                    </div>
+                `;
+                updateTotal();
+                return;
+            }
+
+            let html = '';
+            saleItems.forEach(item => {
+                html += `
+                    <div class="sale-item">
+                        <div class="sale-item-info">
+                            <div class="sale-item-name">${item.name}</div>
+                            <div class="sale-item-price">S/ ${item.price.toFixed(2)}</div>
+                            ${item.note ? `<div class="sale-item-note">📝 ${item.note}</div>` : ''}
+                            <input 
+                                type="text" 
+                                id="note-${item.id}" 
+                                class="note-input" 
+                                placeholder="Agregar nota..."
+                                style="display: none;"
+                                value="${item.note}"
+                                onchange="updateNote(${item.id}, this.value)"
+                            />
+                        </div>
+                        <div class="sale-item-actions">
+                            <button class="icon-btn" onclick="toggleNote(${item.id})" title="Agregar nota">
+                                📝
+                            </button>
+                            <button class="icon-btn" onclick="removeProduct(${item.id})" title="Eliminar">
+                                🗑️
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `
+                <div class="total-section">
+                    <div class="total-row">
+                        <span>Total:</span>
+                        <span id="totalAmount">S/ 0.00</span>
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = html;
+            updateTotal();
+        }
+
+        function updateTotal() {
+            const total = saleItems.reduce((sum, item) => sum + item.price, 0);
+            const totalElement = document.getElementById('totalAmount');
+            if (totalElement) {
+                totalElement.textContent = `S/ ${total.toFixed(2)}`;
+            }
+            
+            const cobrarBtn = document.querySelector('.btn-primary');
+            if (cobrarBtn) {
+                cobrarBtn.textContent = `Cobrar S/ ${total.toFixed(2)}`;
+            }
+        }
+    </script>
+</body>
+</html>
+```

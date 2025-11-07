@@ -1,0 +1,95 @@
+================================================================================
+REPORTE DE PRUEBA DE ESTABILIDAD
+Sistema POS Adaptativo
+================================================================================
+
+📅 Fecha: 2025-11-07 15:43:14
+⏱️  Duración: 3.55 segundos (0.06 minutos)
+📁 Carpeta de datos: pruebas/datos_prueba/estabilidad_20251107_154310
+📄 Log detallado: pruebas/logs/estabilidad_20251107_154310.log
+
+--------------------------------------------------------------------------------
+RESULTADOS
+--------------------------------------------------------------------------------
+
+🎯 Sesiones planificadas: 30
+✅ Sesiones exitosas: 0
+❌ Sesiones fallidas: 30
+📊 Integridad de datos: 0.00%
+🐛 Errores críticos: 30
+⚠️  Advertencias: 0
+
+--------------------------------------------------------------------------------
+CRITERIOS DE ACEPTACIÓN
+--------------------------------------------------------------------------------
+
+• 0 errores críticos: ❌ NO CUMPLE
+• 100% de integridad: ❌ NO CUMPLE
+• 30+ sesiones: ✅ CUMPLE
+
+⚠️  RESULTADO FINAL: ❌ PRUEBA NO SUPERADA
+
+--------------------------------------------------------------------------------
+ERRORES CRÍTICOS DETALLADOS
+--------------------------------------------------------------------------------
+
+1. {'sesion': 1, 'accion': 1, 'error': 'No columns to parse from file', 'timestamp': '2025-11-07T15:43:10.708218'}
+
+2. {'sesion': 2, 'accion': 1, 'error': 'No columns to parse from file', 'timestamp': '2025-11-07T15:43:10.824896'}
+
+3. {'sesion': 3, 'accion': 1, 'error': 'No columns to parse from file', 'timestamp': '2025-11-07T15:43:10.948158'}
+
+4. {'sesion': 4, 'accion': 1, 'error': 'No columns to parse from file', 'timestamp': '2025-11-07T15:43:11.070458'}
+
+5. {'sesion': 5, 'accion': 1, 'error': 'No columns to parse from file', 'timestamp': '2025-11-07T15:43:11.195146'}
+
+6. {'sesion': 6, 'accion': 1, 'error': 'No columns to parse from file', 'timestamp': '2025-11-07T15:43:11.306214'}
+
+7. {'sesion': 7, 'accion': 1, 'error': 'No columns to parse from file', 'timestamp': '2025-11-07T15:43:11.429499'}
+
+8. {'sesion': 8, 'accion': 1, 'error': 'No columns to parse from file', 'timestamp': '2025-11-07T15:43:11.550141'}
+
+9. {'sesion': 9, 'accion': 1, 'error': 'No columns to parse from file', 'timestamp': '2025-11-07T15:43:11.667641'}
+
+10. {'sesion': 10, 'accion': 1, 'error': 'No columns to parse from file', 'timestamp': '2025-11-07T15:43:11.785814'}
+
+11. {'sesion': 11, 'accion': 1, 'error': 'No columns to parse from file', 'timestamp': '2025-11-07T15:43:11.906791'}
+
+12. {'sesion': 12, 'accion': 1, 'error': 'No columns to parse from file', 'timestamp': '2025-11-07T15:43:12.026664'}
+
+13. {'sesion': 13, 'accion': 1, 'error': 'No columns to parse from file', 'timestamp': '2025-11-07T15:43:12.146327'}
+
+14. {'sesion': 14, 'accion': 1, 'error': 'No columns to parse from file', 'timestamp': '2025-11-07T15:43:12.266734'}
+
+15. {'sesion': 15, 'accion': 1, 'error': 'No columns to parse from file', 'timestamp': '2025-11-07T15:43:12.392614'}
+
+16. {'sesion': 16, 'accion': 1, 'error': 'No columns to parse from file', 'timestamp': '2025-11-07T15:43:12.507412'}
+
+17. {'sesion': 17, 'accion': 1, 'error': 'No columns to parse from file', 'timestamp': '2025-11-07T15:43:12.630285'}
+
+18. {'sesion': 18, 'accion': 1, 'error': 'No columns to parse from file', 'timestamp': '2025-11-07T15:43:12.753631'}
+
+19. {'sesion': 19, 'accion': 1, 'error': 'No columns to parse from file', 'timestamp': '2025-11-07T15:43:12.865322'}
+
+20. {'sesion': 20, 'accion': 1, 'error': 'No columns to parse from file', 'timestamp': '2025-11-07T15:43:12.984359'}
+
+21. {'sesion': 21, 'accion': 1, 'error': 'No columns to parse from file', 'timestamp': '2025-11-07T15:43:13.106365'}
+
+22. {'sesion': 22, 'accion': 1, 'error': 'No columns to parse from file', 'timestamp': '2025-11-07T15:43:13.229750'}
+
+23. {'sesion': 23, 'accion': 1, 'error': 'No columns to parse from file', 'timestamp': '2025-11-07T15:43:13.340297'}
+
+24. {'sesion': 24, 'accion': 1, 'error': 'No columns to parse from file', 'timestamp': '2025-11-07T15:43:13.450616'}
+
+25. {'sesion': 25, 'accion': 1, 'error': 'No columns to parse from file', 'timestamp': '2025-11-07T15:43:13.559680'}
+
+26. {'sesion': 26, 'accion': 1, 'error': 'No columns to parse from file', 'timestamp': '2025-11-07T15:43:13.671968'}
+
+27. {'sesion': 27, 'accion': 1, 'error': 'No columns to parse from file', 'timestamp': '2025-11-07T15:43:13.792359'}
+
+28. {'sesion': 28, 'accion': 1, 'error': 'No columns to parse from file', 'timestamp': '2025-11-07T15:43:13.909401'}
+
+29. {'sesion': 29, 'accion': 1, 'error': 'No columns to parse from file', 'timestamp': '2025-11-07T15:43:14.023461'}
+
+30. {'sesion': 30, 'accion': 1, 'error': 'No columns to parse from file', 'timestamp': '2025-11-07T15:43:14.142326'}
+

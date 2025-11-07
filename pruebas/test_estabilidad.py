@@ -127,8 +127,25 @@ class TestEstabilidad:
                         writer.writerow(["SesionID", "TiempoPromedioAccion(s)", "ErroresSesion", "TareasCompletadas", "NivelClasificado"])
                         writer.writerow([f"S{sesion_id:03d}", 0, 0, 0, "Novato"])
                     
+                    if not os.path.exists(self.archivo_csv) or os.path.getsize(self.archivo_csv) == 0:
+    # Si el archivo no existe o está vacío, inicialízalo
+                        df_nuevo = pd.DataFrame([{
+                            'SesionID': f"S{sesion_id:03d}",
+                            'TiempoPromedioAccion(s)': 0,
+                            'ErroresSesion': 0,
+                            'TareasCompletadas': 0,
+                            'NivelClasificado': ''
+                        }])
+                        df_nuevo.to_csv(self.archivo_csv, index=False)
+                    
                     # Leer y actualizar
                     df = pd.read_csv(self.archivo_csv)
+
+                    # Convertir valores a tipo numérico
+                    df['TiempoPromedioAccion(s)'] = pd.to_numeric(df['TiempoPromedioAccion(s)'], errors='coerce').fillna(0)
+                    df['ErroresSesion'] = pd.to_numeric(df['ErroresSesion'], errors='coerce').fillna(0)
+                    df['TareasCompletadas'] = pd.to_numeric(df['TareasCompletadas'], errors='coerce').fillna(0)
+
                     tiempo_actual = df['TiempoPromedioAccion(s)'].iloc[0]
                     errores_actual = df['ErroresSesion'].iloc[0]
                     tareas_actual = df['TareasCompletadas'].iloc[0]

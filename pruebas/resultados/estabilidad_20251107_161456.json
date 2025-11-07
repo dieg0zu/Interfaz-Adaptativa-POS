@@ -1,0 +1,13 @@
+{
+    "fecha": "2025-11-07T16:15:37.103070",
+    "duracion_segundos": 40.40422248840332,
+    "sesiones_planificadas": 30,
+    "sesiones_exitosas": 30,
+    "sesiones_fallidas": 0,
+    "errores_criticos": 0,
+    "advertencias": 0,
+    "integridad_porcentaje": 100.0,
+    "cumple_criterio": true,
+    "detalles_errores": [],
+    "detalles_advertencias": []
+}

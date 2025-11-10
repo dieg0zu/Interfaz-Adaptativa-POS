@@ -598,12 +598,27 @@
             const tipoTexto = tipo === 'electronico' ? 'Comprobante Electrónico' : 'Nota de Venta';
             alert(`¡Compra finalizada!\nTipo: ${tipoTexto}\nMétodo: ${selectedMethod}`);
             
+            // Registrar evento de compra exitosa
+            fetch("{{ url_for('evento_api') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    tipo_evento: 'compra_finalizada',
+                    duracion: 0,
+                    exito: true
+                })
+            });
+            
             localStorage.removeItem('posCartExperto');
-            window.location.href = 'index-experto.html';
+            // Volver a la pantalla principal usando la ruta de Flask
+            window.location.href = "{{ url_for('experto') }}";
         }
 
         function goBack() {
-            window.location.href = 'index-experto.html';
+            // Volver a la pantalla principal usando la ruta de Flask
+            window.location.href = "{{ url_for('experto') }}";
         }
 
         // Update change when input changes

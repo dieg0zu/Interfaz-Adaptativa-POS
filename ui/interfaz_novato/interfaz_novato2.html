@@ -402,7 +402,6 @@
                 </div>
             </div>
         </div>
-    </div>
 
     <script>
         let selectedPaymentMethod = null;
@@ -466,15 +465,29 @@
             
             alert('¡Compra finalizada exitosamente!');
             
+            // Registrar evento de compra exitosa
+            fetch("{{ url_for('evento_api') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    tipo_evento: 'compra_finalizada',
+                    duracion: 0,
+                    exito: true
+                })
+            });
+            
             // Limpiar el carrito en localStorage
             localStorage.removeItem('posCart');
             
-            // Volver a la pantalla principal
-            window.location.href = 'interfaz_novato.html'; // Cambia esto por el nombre de tu archivo principal
+            // Volver a la pantalla principal usando la ruta de Flask
+            window.location.href = "{{ url_for('novato') }}";
         }
 
         function goBack() {
-            window.location.href = 'interfaz_novato.html'; // Cambia esto por el nombre de tu archivo principal
+            // Volver a la pantalla principal usando la ruta de Flask
+            window.location.href = "{{ url_for('novato') }}";
         }
 
         // Cargar datos al iniciar

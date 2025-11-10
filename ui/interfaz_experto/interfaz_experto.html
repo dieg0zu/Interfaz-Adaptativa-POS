@@ -730,7 +730,8 @@
         function goToPayment() {
             if (cart.length === 0) return;
             saveCart();
-            window.location.href = 'pago-experto.html';
+            // Redirigir a la página de pago usando la ruta de Flask
+            window.location.href = "{{ url_for('experto_pago') }}";
         }
 
         loadCart();

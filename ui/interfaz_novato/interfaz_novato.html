@@ -832,9 +832,8 @@
             // Guardar el carrito en localStorage para pasarlo a la página de pago
             localStorage.setItem('posCart', JSON.stringify(cart));
             
-            // Redirigir a la página de pago
-            // IMPORTANTE: Cambia 'pago.html' por el nombre que le des al archivo de pago
-            window.location.href = 'interfaz_novato2.html';
+            // Redirigir a la página de pago usando la ruta de Flask
+            window.location.href = "{{ url_for('novato_pago') }}";
         }
 
         function goToMain() {

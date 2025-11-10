@@ -14,17 +14,52 @@ def home():
     global interfaz_actual
     
     archivo = "data/dataset_pos.csv"
-    if os.path.exists(archivo):
-        df = pd.read_csv(archivo)
-        if len(df) > 0:
-            eventos = df['ErroresSesion'].iloc[0] + df['TareasCompletadas'].iloc[0]
-            print(f"\n{'='*60}")
-            print(f"🚀 INICIO DE SESIÓN - {eventos} eventos acumulados")
-            print(f"{'='*60}")
-    else:
+    
+    # Verificar si es la primera vez (sin datos)
+    es_primera_vez = False
+    if not os.path.exists(archivo):
+        es_primera_vez = True
         print(f"\n{'='*60}")
-        print(f"🆕 PRIMERA VEZ - Creando sesión nueva")
+        print(f"🆕 PRIMERA VEZ - Mostrando interfaz original")
         print(f"{'='*60}")
+        return redirect(url_for("original"))
+    
+    df = pd.read_csv(archivo)
+    
+    # Verificar si hay datos reales (no solo encabezado)
+    if df.empty or len(df) == 0:
+        print(f"\n{'='*60}")
+        print(f"🆕 SIN DATOS - Mostrando interfaz original")
+        print(f"{'='*60}")
+        return redirect(url_for("original"))
+    
+    # Verificar si hay una fila válida con datos
+    try:
+        # Verificar si la primera fila tiene valores válidos
+        primera_fila = df.iloc[0]
+        errores = pd.to_numeric(primera_fila.get('ErroresSesion', 0), errors='coerce') or 0
+        tareas = pd.to_numeric(primera_fila.get('TareasCompletadas', 0), errors='coerce') or 0
+        eventos = int(errores) + int(tareas)
+        
+        # Si no hay eventos registrados, mostrar interfaz original
+        if eventos == 0:
+            print(f"\n{'='*60}")
+            print(f"🆕 SIN EVENTOS - Mostrando interfaz original")
+            print(f"   Errores: {errores}, Tareas: {tareas}")
+            print(f"{'='*60}")
+            return redirect(url_for("original"))
+        
+        print(f"\n{'='*60}")
+        print(f"🚀 INICIO DE SESIÓN - {eventos} eventos acumulados")
+        print(f"   Errores: {errores}, Tareas: {tareas}")
+        print(f"{'='*60}")
+    except (IndexError, KeyError, ValueError) as e:
+        # Si hay algún error al leer los datos, mostrar interfaz original
+        print(f"\n{'='*60}")
+        print(f"🆕 ERROR AL LEER DATOS - Mostrando interfaz original")
+        print(f"   Error: {str(e)}")
+        print(f"{'='*60}")
+        return redirect(url_for("original"))
     
     interfaz, nivel = evaluar_y_asignar()
     
@@ -131,7 +166,7 @@ def obtener_estado():
         "nivel": str(df['NivelClasificado'].iloc[0])
     })
 
-# Rutas para cada interfaz
+# Rutas para cada interfaz principal
 @app.route("/novato")
 def novato():
     return render_template("interfaz_novato/interfaz_novato.html", nivel_actual="novato")
@@ -144,20 +179,42 @@ def intermedio():
 def experto():
     return render_template("interfaz_experto/interfaz_experto.html", nivel_actual="experto")
 
-@app.route("/estatica")
-def estatica():
-    return render_template("interfaz_estatica.html")
+# Rutas para pantallas de pago
+@app.route("/novato/pago")
+def novato_pago():
+    return render_template("interfaz_novato/interfaz_novato2.html", nivel_actual="novato")
+
+@app.route("/intermedio/pago")
+def intermedio_pago():
+    return render_template("interfaz_intermedio/interfaz_intermedio2.html", nivel_actual="intermedio")
+
+@app.route("/experto/pago")
+def experto_pago():
+    return render_template("interfaz_experto/interfaz_experto2.html", nivel_actual="experto")
+
+@app.route("/original")
+def original():
+    """Interfaz original de Wally POS (pantalla inicial sin datos)"""
+    return render_template("interfaz_original.html")
+
+@app.route("/original/pago")
+def original_pago():
+    """Pantalla de pago de la interfaz original"""
+    return render_template("interfaz_original_2.html")
 
 @app.route("/reset", methods=["POST", "GET"])
 def reset():
     """Reinicia el sistema (borra datos acumulados)"""
+    global interfaz_actual
     archivo = "data/dataset_pos.csv"
     if os.path.exists(archivo):
         os.remove(archivo)
         print("\n" + "="*60)
         print("🔄 SISTEMA REINICIADO - Datos borrados")
         print("="*60 + "\n")
-    return jsonify({"status": "ok", "message": "Sistema reiniciado"})
+        interfaz_actual = "original"
+    # Redirigir a la interfaz original
+    return redirect(url_for("original"))
 
 if __name__ == "__main__":
     os.makedirs("data", exist_ok=True)

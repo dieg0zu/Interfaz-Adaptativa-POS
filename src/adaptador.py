@@ -17,16 +17,35 @@ def evaluar_y_asignar():
     
     df = pd.read_csv(archivo)
     
-    if df.empty:
+    if df.empty or len(df) == 0:
         print("[ADAPTADOR] Sin datos → NOVATO (default)")
         return "Novato → Interfaz simplificada", 30.0
     
-    # ========== LEER MÉTRICAS DIRECTAMENTE ==========
-    tiempo_prom = df['TiempoPromedioAccion(s)'].iloc[0]
-    errores = df['ErroresSesion'].iloc[0]
-    tareas = df['TareasCompletadas'].iloc[0]
+    # Verificar si la fila tiene datos válidos (no solo encabezado)
+    try:
+        primera_fila = df.iloc[0]
+        sesion_id = str(primera_fila.get('SesionID', '')).strip()
+        if not sesion_id or sesion_id == '' or sesion_id.lower() == 'nan':
+            print("[ADAPTADOR] CSV solo con encabezado → NOVATO (default)")
+            return "Novato → Interfaz simplificada", 30.0
+    except (IndexError, KeyError):
+        print("[ADAPTADOR] Error al leer fila → NOVATO (default)")
+        return "Novato → Interfaz simplificada", 30.0
     
-    eventos_totales = errores + tareas
+    # ========== LEER MÉTRICAS DIRECTAMENTE ==========
+    tiempo_prom = pd.to_numeric(df['TiempoPromedioAccion(s)'].iloc[0], errors='coerce') or 0
+    errores = pd.to_numeric(df['ErroresSesion'].iloc[0], errors='coerce') or 0
+    tareas = pd.to_numeric(df['TareasCompletadas'].iloc[0], errors='coerce') or 0
+    
+    # Convertir NaN a 0
+    if pd.isna(tiempo_prom):
+        tiempo_prom = 0
+    if pd.isna(errores):
+        errores = 0
+    if pd.isna(tareas):
+        tareas = 0
+    
+    eventos_totales = int(errores) + int(tareas)
     
     print(f"\n{'='*60}")
     print(f"🧠 EVALUACIÓN DEL USUARIO")

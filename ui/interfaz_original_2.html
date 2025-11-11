@@ -539,15 +539,32 @@
             <div class="products-section">
                 <h2>Productos seleccionados</h2>
                 
-                <!-- Productos se cargarán dinámicamente -->
-                <div id="productsList">
-                    <!-- Los productos se cargarán aquí -->
+                <!-- Productos de ejemplo -->
+                <div class="product-item">
+                    <div class="product-info">
+                        <div class="product-quantity">1 Alpaca Pang 2 piezas (1 Un)</div>
+                        <div class="product-price">S/ 8.00</div>
+                    </div>
+                </div>
+
+                <div class="product-item">
+                    <div class="product-info">
+                        <div class="product-quantity">1 Alpaca Pang 4 piezas (1 Un)</div>
+                        <div class="product-price">S/ 15.00</div>
+                    </div>
+                </div>
+
+                <div class="product-item">
+                    <div class="product-info">
+                        <div class="product-quantity">1 Alpaca Pang 6 piezas (1 Un)</div>
+                        <div class="product-price">S/ 20.00</div>
+                    </div>
                 </div>
 
                 <div class="products-total">
                     <div class="total-row">
                         <span>Importe Total</span>
-                        <span id="totalAmount">S/ 0.00</span>
+                        <span>S/ 43.00</span>
                     </div>
                 </div>
             </div>
@@ -556,7 +573,7 @@
                 <div class="container">
                     <div class="header">
                         <h1>Pago</h1>
-                        <button class="close-btn" onclick="goBack()">✕</button>
+                        <button class="close-btn">✕</button>
                     </div>
 
                     <div class="tabs">
@@ -576,16 +593,19 @@
 
                     <div class="quick-amounts">
                         <h3>Efectivo rápido</h3>
-                        <div class="amount-buttons" id="quickAmounts">
-                            <!-- Los botones se generarán dinámicamente -->
+                        <div class="amount-buttons">
+                            <button class="amount-btn">S/ 43.00</button>
+                            <button class="amount-btn">S/ 45.00</button>
+                            <button class="amount-btn">S/ 50.00</button>
+                            <button class="amount-btn">S/ 100.00</button>
                         </div>
                     </div>
 
                     <div class="amount-input-section">
                         <h3>Ingresa el monto</h3>
                         <div class="amount-display">
-                            <div class="amount-value" id="amountDisplay">S/ 0.00</div>
-                            <button class="clear-btn" onclick="clearAmount()">⊗</button>
+                            <div class="amount-value">S/ 43.00</div>
+                            <button class="clear-btn">⊗</button>
                         </div>
                     </div>
 
@@ -595,8 +615,8 @@
                             <div>Vuelto</div>
                         </div>
                         <div class="total-values">
-                            <div class="total-amount" id="paymentTotal">S/ 0.00</div>
-                            <div class="total-amount change-amount" id="changeAmount">S/ 0.00</div>
+                            <div class="total-amount">S/ 43.00</div>
+                            <div class="total-amount change-amount">S/ 0.00</div>
                         </div>
                     </div>
 
@@ -635,8 +655,8 @@
                             </div>
                         </div>
                         <div class="document-types hidden" id="documentTypes">
-                            <button class="document-btn" onclick="finalizarCompra('electronico')">Comprobante electrónico</button>
-                            <button class="document-btn" onclick="finalizarCompra('nota')">Nota de venta</button>
+                            <button class="document-btn">Comprobante electrónico</button>
+                            <button class="document-btn">Nota de venta</button>
                         </div>
                     </div>
                 </div>
@@ -645,110 +665,6 @@
     </div>
 
     <script>
-        let totalAmount = 0;
-        let paidAmount = 0;
-
-        // Cargar datos del carrito al iniciar
-        function loadCartData() {
-            const cartData = localStorage.getItem('posCartOriginal');
-            if (!cartData) {
-                // Si no hay datos, usar datos de ejemplo
-                const sampleCart = [
-                    { name: 'Alpaca Pang 2 piezas', quantity: 1, price: 8.00 },
-                    { name: 'Alpaca Pang 4 piezas', quantity: 1, price: 15.00 },
-                    { name: 'Alpaca Pang 6 piezas', quantity: 1, price: 20.00 }
-                ];
-                renderProducts(sampleCart);
-                return;
-            }
-
-            const cart = JSON.parse(cartData);
-            renderProducts(cart);
-        }
-
-        function renderProducts(cart) {
-            const productsList = document.getElementById('productsList');
-            const totalElement = document.getElementById('totalAmount');
-            const paymentTotal = document.getElementById('paymentTotal');
-            
-            if (!cart || cart.length === 0) {
-                productsList.innerHTML = '<div class="product-item"><div class="product-info"><div>No hay productos</div></div></div>';
-                totalAmount = 0;
-                updateTotals();
-                return;
-            }
-
-            let total = 0;
-            let html = '';
-            
-            cart.forEach(item => {
-                const itemTotal = item.price * (item.quantity || 1);
-                total += itemTotal;
-                html += `
-                    <div class="product-item">
-                        <div class="product-info">
-                            <div class="product-quantity">${item.quantity || 1} ${item.name} (${item.quantity || 1} Un)</div>
-                            <div class="product-price">S/ ${itemTotal.toFixed(2)}</div>
-                        </div>
-                    </div>
-                `;
-            });
-
-            productsList.innerHTML = html;
-            totalAmount = total;
-            updateTotals();
-            generateQuickAmounts();
-        }
-
-        function updateTotals() {
-            document.getElementById('totalAmount').textContent = `S/ ${totalAmount.toFixed(2)}`;
-            document.getElementById('paymentTotal').textContent = `S/ ${totalAmount.toFixed(2)}`;
-            updateChange();
-        }
-
-        function generateQuickAmounts() {
-            const quickAmounts = document.getElementById('quickAmounts');
-            
-            if (totalAmount === 0) {
-                // Si no hay total, mostrar montos por defecto
-                quickAmounts.innerHTML = `
-                    <button class="amount-btn" onclick="setAmount(10)">S/ 10.00</button>
-                    <button class="amount-btn" onclick="setAmount(20)">S/ 20.00</button>
-                    <button class="amount-btn" onclick="setAmount(50)">S/ 50.00</button>
-                    <button class="amount-btn" onclick="setAmount(100)">S/ 100.00</button>
-                `;
-                return;
-            }
-
-            const amounts = [
-                parseFloat(totalAmount.toFixed(2)),
-                parseFloat((totalAmount + 5).toFixed(2)),
-                parseFloat((totalAmount + 10).toFixed(2)),
-                parseFloat((totalAmount + 50).toFixed(2))
-            ];
-
-            quickAmounts.innerHTML = amounts.map(amount => 
-                `<button class="amount-btn" onclick="setAmount(${amount})">S/ ${amount.toFixed(2)}</button>`
-            ).join('');
-        }
-
-        function setAmount(amount) {
-            paidAmount = amount;
-            document.getElementById('amountDisplay').textContent = `S/ ${amount.toFixed(2)}`;
-            updateChange();
-        }
-
-        function clearAmount() {
-            paidAmount = 0;
-            document.getElementById('amountDisplay').textContent = `S/ 0.00`;
-            updateChange();
-        }
-
-        function updateChange() {
-            const change = Math.max(0, paidAmount - totalAmount);
-            document.getElementById('changeAmount').textContent = `S/ ${change.toFixed(2)}`;
-        }
-
         function selectPayment(element, paymentType) {
             // Remover selección previa
             document.querySelectorAll('.payment-method').forEach(method => {
@@ -764,27 +680,6 @@
                 document.getElementById('documentTypes').classList.remove('hidden');
             }, 300);
         }
-
-        function finalizarCompra(tipo) {
-            const tipoTexto = tipo === 'electronico' ? 'Comprobante Electrónico' : 'Nota de Venta';
-            alert(`¡Venta completada!\nTipo: ${tipoTexto}\nTotal: S/ ${totalAmount.toFixed(2)}`);
-            
-            // Limpiar el carrito en localStorage
-            localStorage.removeItem('posCartOriginal');
-            
-            // Volver a la pantalla principal usando la ruta de Flask
-            window.location.href = "{{ url_for('original') }}";
-        }
-
-        function goBack() {
-            // Volver a la pantalla principal usando la ruta de Flask
-            window.location.href = "{{ url_for('original') }}";
-        }
-
-        // Cargar datos al iniciar
-        document.addEventListener('DOMContentLoaded', function() {
-            loadCartData();
-        });
     </script>
 </body>
 </html>

@@ -37,8 +37,24 @@ def home():
     try:
         # Verificar si la primera fila tiene valores válidos
         primera_fila = df.iloc[0]
-        errores = pd.to_numeric(primera_fila.get('ErroresSesion', 0), errors='coerce') or 0
-        tareas = pd.to_numeric(primera_fila.get('TareasCompletadas', 0), errors='coerce') or 0
+        
+        # Verificar si SesionID está vacío o es NaN (indica fila vacía)
+        sesion_id = str(primera_fila.get('SesionID', '')).strip()
+        if not sesion_id or sesion_id == '' or sesion_id.lower() == 'nan':
+            print(f"\n{'='*60}")
+            print(f"🆕 CSV SOLO CON ENCABEZADO - Mostrando interfaz original")
+            print(f"{'='*60}")
+            return redirect(url_for("original"))
+        
+        errores = pd.to_numeric(primera_fila.get('ErroresSesion', 0), errors='coerce')
+        tareas = pd.to_numeric(primera_fila.get('TareasCompletadas', 0), errors='coerce')
+        
+        # Si son NaN, convertirlos a 0
+        if pd.isna(errores):
+            errores = 0
+        if pd.isna(tareas):
+            tareas = 0
+            
         eventos = int(errores) + int(tareas)
         
         # Si no hay eventos registrados, mostrar interfaz original
@@ -99,7 +115,8 @@ def evento():
         print(f"\n🔄 [CAMBIO DE INTERFAZ] {interfaz_actual.upper()} → {nueva_interfaz.upper()}\n")
         interfaz_actual = nueva_interfaz
     
-    return redirect(url_for(interfaz_actual))
+    # Siempre redirigir a la nueva interfaz determinada
+    return redirect(url_for(nueva_interfaz))
 
 @app.route("/api/evento", methods=["POST"])
 def evento_api():
@@ -196,11 +213,6 @@ def experto_pago():
 def original():
     """Interfaz original de Wally POS (pantalla inicial sin datos)"""
     return render_template("interfaz_original.html")
-
-@app.route("/original/pago")
-def original_pago():
-    """Pantalla de pago de la interfaz original"""
-    return render_template("interfaz_original_2.html")
 
 @app.route("/reset", methods=["POST", "GET"])
 def reset():

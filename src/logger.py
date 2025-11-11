@@ -27,10 +27,19 @@ def registrar_evento(tipo_evento, duracion, exito=True):
     
     # Obtener métricas actuales
     if len(df) > 0:
-        tiempo_actual = df['TiempoPromedioAccion(s)'].iloc[0]
-        errores_actual = df['ErroresSesion'].iloc[0]
-        tareas_actual = df['TareasCompletadas'].iloc[0]
-        eventos_totales = errores_actual + tareas_actual
+        tiempo_actual = pd.to_numeric(df['TiempoPromedioAccion(s)'].iloc[0], errors='coerce') or 0
+        errores_actual = pd.to_numeric(df['ErroresSesion'].iloc[0], errors='coerce') or 0
+        tareas_actual = pd.to_numeric(df['TareasCompletadas'].iloc[0], errors='coerce') or 0
+        
+        # Convertir NaN a 0
+        if pd.isna(tiempo_actual):
+            tiempo_actual = 0
+        if pd.isna(errores_actual):
+            errores_actual = 0
+        if pd.isna(tareas_actual):
+            tareas_actual = 0
+            
+        eventos_totales = int(errores_actual) + int(tareas_actual)
     else:
         tiempo_actual = 0
         errores_actual = 0

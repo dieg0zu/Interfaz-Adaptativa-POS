@@ -533,7 +533,7 @@
             </div>
             <div class="sale-footer">
                 <button class="btn btn-secondary">Guardar</button>
-                <button class="btn btn-primary" id="btnCobrar" onclick="goToPayment()">Cobrar S/ 0.00</button>
+                <button class="btn btn-primary">Cobrar S/ 0.00</button>
             </div>
         </div>
     </div>
@@ -639,25 +639,12 @@
                 totalElement.textContent = `S/ ${total.toFixed(2)}`;
             }
             
-            const cobrarBtn = document.getElementById('btnCobrar');
+            const cobrarBtn = document.querySelector('.btn-primary');
             if (cobrarBtn) {
                 cobrarBtn.textContent = `Cobrar S/ ${total.toFixed(2)}`;
-                cobrarBtn.disabled = saleItems.length === 0;
             }
-        }
-
-        function goToPayment() {
-            if (saleItems.length === 0) {
-                alert('Agrega productos al carrito antes de cobrar');
-                return;
-            }
-            
-            // Guardar el carrito en localStorage para pasarlo a la página de pago
-            localStorage.setItem('posCartOriginal', JSON.stringify(saleItems));
-            
-            // Redirigir a la página de pago usando la ruta de Flask
-            window.location.href = "{{ url_for('original_pago') }}";
         }
     </script>
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
 </body>
 </html>

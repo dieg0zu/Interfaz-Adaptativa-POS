@@ -60,43 +60,57 @@ def evaluar_y_asignar():
     
     # Usuario completamente nuevo (0 eventos)
     if eventos_totales == 0:
-        print("🆕 Usuario nuevo → NOVATO")
+        print("🆕 Usuario nuevo → NOVATO (sin datos para evaluar)")
         print(f"{'='*60}\n")
         return "Novato → Interfaz simplificada", 30.0
     
-    # Evaluación preliminar (1-3 eventos)
-    if eventos_totales <= 3:
-        print(f"⚠️  Pocos eventos ({eventos_totales}) → Evaluación preliminar")
-        
-        # Si es rápido y sin errores desde el inicio = posible experto
-        if tiempo_prom < 3.5 and errores == 0 and tareas >= 2:
-            print("   → Usuario muestra experiencia → INTERMEDIO")
-            print(f"{'='*60}\n")
-            return "Intermedio → Interfaz equilibrada", 55.0
-        else:
-            print("   → Mantener NOVATO (seguro)")
-            print(f"{'='*60}\n")
-            return "Novato → Interfaz simplificada", 35.0
-    
-    # ========== EVALUACIÓN CON LÓGICA DIFUSA (4+ eventos) ==========
-    print(f"✅ Evaluación completa con lógica difusa")
+    # ========== EVALUACIÓN CON LÓGICA DIFUSA ==========
+    # Siempre usar lógica difusa cuando hay al menos 1 evento
+    print(f"✅ Evaluación con lógica difusa ({eventos_totales} eventos)")
     
     motor = crear_motor_difuso()
     
-    # Normalizar valores al rango esperado
-    motor.input['TiempoPromedioAccion'] = min(tiempo_prom, 10)
-    motor.input['ErroresSesion'] = min(errores, 10)
-    motor.input['TareasCompletadas'] = min(tareas, 30)
+    # Normalizar valores al rango esperado del motor difuso
+    # Tiempo: 0-10 segundos
+    tiempo_normalizado = max(0, min(float(tiempo_prom), 10.0))
+    # Errores: 0-10
+    errores_normalizados = max(0, min(int(errores), 10))
+    # Tareas: 0-30
+    tareas_normalizadas = max(0, min(int(tareas), 30))
+    
+    # Asignar valores al motor difuso
+    motor.input['TiempoPromedioAccion'] = tiempo_normalizado
+    motor.input['ErroresSesion'] = errores_normalizados
+    motor.input['TareasCompletadas'] = tareas_normalizadas
+    
+    print(f"📥 INPUTS AL MOTOR DIFUSO:")
+    print(f"   • Tiempo: {tiempo_normalizado:.2f}s (normalizado)")
+    print(f"   • Errores: {errores_normalizados}")
+    print(f"   • Tareas: {tareas_normalizadas}")
     
     try:
+        # Ejecutar inferencia difusa
         motor.compute()
-        nivel = motor.output['NivelUsuario']
+        nivel = float(motor.output['NivelUsuario'])
         
+        # Asegurar que el nivel esté en el rango válido [0, 100]
+        nivel = max(0, min(100, nivel))
+        
+        # Determinar interfaz basada en el nivel
         interfaz = asignar_interfaz(nivel)
         
-        print(f"🎯 RESULTADO:")
+        # Determinar nivel de confianza basado en número de eventos
+        if eventos_totales < 5:
+            confianza = "Baja (pocos datos)"
+        elif eventos_totales < 10:
+            confianza = "Media"
+        else:
+            confianza = "Alta"
+        
+        print(f"🎯 RESULTADO DE CLASIFICACIÓN:")
         print(f"   • Nivel Difuso: {nivel:.2f} / 100")
-        print(f"   • Interfaz: {interfaz}")
+        print(f"   • Interfaz Asignada: {interfaz}")
+        print(f"   • Confianza: {confianza} ({eventos_totales} eventos)")
         print(f"{'='*60}\n")
         
         # Actualizar el nivel clasificado en el CSV
@@ -106,20 +120,53 @@ def evaluar_y_asignar():
         
     except Exception as e:
         print(f"❌ Error en motor difuso: {e}")
-        print(f"   → Fallback a INTERMEDIO")
+        import traceback
+        traceback.print_exc()
+        print(f"   → Fallback a evaluación simple")
+        
+        # Fallback: evaluación simple basada en reglas básicas
+        if tiempo_prom > 7 or errores > 5:
+            nivel_fallback = 25.0  # Novato
+            interfaz_fallback = "Novato → Interfaz simplificada"
+        elif tiempo_prom < 3 and errores < 2 and tareas > 15:
+            nivel_fallback = 75.0  # Experto
+            interfaz_fallback = "Experto → Interfaz avanzada"
+        else:
+            nivel_fallback = 50.0  # Intermedio
+            interfaz_fallback = "Intermedio → Interfaz equilibrada"
+        
+        print(f"   → Nivel Fallback: {nivel_fallback:.2f} → {interfaz_fallback}")
         print(f"{'='*60}\n")
-        return "Intermedio → Interfaz equilibrada", 50.0
+        
+        actualizar_nivel_clasificado(interfaz_fallback, archivo)
+        return interfaz_fallback, nivel_fallback
 
 def actualizar_nivel_clasificado(interfaz, archivo):
     """Actualiza la columna NivelClasificado en el CSV"""
-    df = pd.read_csv(archivo)
-    
-    if "novato" in interfaz.lower():
-        nivel_texto = "Novato"
-    elif "intermedio" in interfaz.lower():
-        nivel_texto = "Intermedio"
-    else:
-        nivel_texto = "Experto"
-    
-    df['NivelClasificado'] = nivel_texto
-    df.to_csv(archivo, index=False)
+    try:
+        df = pd.read_csv(archivo)
+        
+        # Determinar nivel basado en la interfaz asignada
+        if "novato" in interfaz.lower():
+            nivel_texto = "Novato"
+        elif "intermedio" in interfaz.lower():
+            nivel_texto = "Intermedio"
+        elif "experto" in interfaz.lower():
+            nivel_texto = "Experto"
+        else:
+            # Si no se puede determinar, usar el nivel por defecto
+            nivel_texto = "Novato"
+        
+        # Asegurar que la columna existe
+        if 'NivelClasificado' not in df.columns:
+            df['NivelClasificado'] = nivel_texto
+        else:
+            df['NivelClasificado'] = nivel_texto
+        
+        # Guardar el CSV
+        df.to_csv(archivo, index=False)
+        print(f"📝 Nivel actualizado en CSV: {nivel_texto}")
+        
+    except Exception as e:
+        print(f"⚠️  Error al actualizar nivel en CSV: {e}")
+        # No lanzar excepción, solo registrar el error

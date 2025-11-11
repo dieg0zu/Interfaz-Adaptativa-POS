@@ -543,6 +543,8 @@
         let itemIdCounter = 0;
 
         function addProduct(name, price) {
+            const inicio = performance.now();
+            
             const item = {
                 id: itemIdCounter++,
                 name: name,
@@ -551,11 +553,25 @@
             };
             saleItems.push(item);
             renderSaleItems();
+            
+            // Registrar evento de agregar producto
+            const duracion = (performance.now() - inicio) / 1000;
+            if (window.registrarExito) {
+                window.registrarExito('agregar_producto', Math.max(0.1, duracion));
+            }
         }
 
         function removeProduct(id) {
+            const inicio = performance.now();
+            
             saleItems = saleItems.filter(item => item.id !== id);
             renderSaleItems();
+            
+            // Registrar evento de eliminar producto
+            const duracion = (performance.now() - inicio) / 1000;
+            if (window.registrarExito) {
+                window.registrarExito('eliminar_producto', Math.max(0.1, duracion));
+            }
         }
 
         function toggleNote(id) {
@@ -642,6 +658,28 @@
             const cobrarBtn = document.querySelector('.btn-primary');
             if (cobrarBtn) {
                 cobrarBtn.textContent = `Cobrar S/ ${total.toFixed(2)}`;
+                
+                // Agregar evento onclick para registrar acción de cobrar
+                cobrarBtn.onclick = function() {
+                    if (saleItems.length === 0) {
+                        if (window.registrarError) {
+                            window.registrarError('intento_cobrar_sin_productos', 0);
+                        }
+                        alert('No hay productos en el carrito');
+                        return;
+                    }
+                    
+                    const inicio = performance.now();
+                    
+                    // Registrar evento de intento de cobrar
+                    if (window.registrarExito) {
+                        const duracion = (performance.now() - inicio) / 1000;
+                        window.registrarExito('intento_cobrar', Math.max(0.1, duracion));
+                    }
+                    
+                    // Aquí puedes agregar la lógica para ir a la pantalla de pago
+                    alert('Función de pago en desarrollo');
+                };
             }
         }
     </script>

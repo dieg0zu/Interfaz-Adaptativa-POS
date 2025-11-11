@@ -92,96 +92,179 @@ def home():
 
 @app.route("/evento", methods=["POST"])
 def evento():
-    """Registrar evento y re-evaluar interfaz"""
+    """Registrar evento y re-evaluar interfaz usando lógica difusa"""
     global interfaz_actual
     
-    tipo_evento = request.form.get("tipo_evento")
-    duracion = float(request.form.get("duracion", 0))
-    exito = request.form.get("exito", "true") == "true"
+    try:
+        tipo_evento = request.form.get("tipo_evento", "accion_generica")
+        duracion = float(request.form.get("duracion", 0))
+        exito = request.form.get("exito", "true") == "true"
 
-    registrar_evento(tipo_evento, duracion, exito)
-    interfaz, nivel = evaluar_y_asignar()
+        # Registrar el evento
+        registrar_evento(tipo_evento, duracion, exito)
+        
+        # Evaluar y clasificar usando lógica difusa
+        interfaz, nivel = evaluar_y_asignar()
 
-    # Determinar nueva interfaz
-    nueva_interfaz = ""
-    if nivel < 40:
-        nueva_interfaz = "novato"
-    elif 40 <= nivel < 70:
-        nueva_interfaz = "intermedio"
-    else:
-        nueva_interfaz = "experto"
-    
-    if nueva_interfaz != interfaz_actual:
-        print(f"\n🔄 [CAMBIO DE INTERFAZ] {interfaz_actual.upper()} → {nueva_interfaz.upper()}\n")
-        interfaz_actual = nueva_interfaz
-    
-    # Siempre redirigir a la nueva interfaz determinada
-    return redirect(url_for(nueva_interfaz))
+        # Determinar nueva interfaz basada en el nivel
+        nueva_interfaz = ""
+        if nivel < 40:
+            nueva_interfaz = "novato"
+        elif 40 <= nivel < 70:
+            nueva_interfaz = "intermedio"
+        else:
+            nueva_interfaz = "experto"
+        
+        # Verificar si hubo cambio de interfaz
+        if nueva_interfaz != interfaz_actual:
+            print(f"\n🔄 [CAMBIO DE INTERFAZ] {interfaz_actual.upper()} → {nueva_interfaz.upper()}")
+            print(f"   Nivel: {nivel:.2f}\n")
+            interfaz_actual = nueva_interfaz
+        
+        # Siempre redirigir a la nueva interfaz determinada
+        return redirect(url_for(nueva_interfaz))
+        
+    except Exception as e:
+        print(f"❌ Error en evento: {e}")
+        import traceback
+        traceback.print_exc()
+        # En caso de error, mantener la interfaz actual
+        return redirect(url_for(interfaz_actual))
 
 @app.route("/api/evento", methods=["POST"])
 def evento_api():
     """Endpoint API para registrar eventos (AJAX)"""
     global interfaz_actual
     
-    data = request.json
-    tipo_evento = data.get("tipo_evento")
-    duracion = float(data.get("duracion", 0))
-    exito = data.get("exito", True)
+    try:
+        data = request.json
+        tipo_evento = data.get("tipo_evento", "accion_generica")
+        duracion = float(data.get("duracion", 0))
+        exito = data.get("exito", True)
 
-    registrar_evento(tipo_evento, duracion, exito)
-    interfaz, nivel = evaluar_y_asignar()
-    
-    nueva_interfaz = ""
-    if nivel < 40:
-        nueva_interfaz = "novato"
-    elif 40 <= nivel < 70:
-        nueva_interfaz = "intermedio"
-    else:
-        nueva_interfaz = "experto"
-    
-    cambio = nueva_interfaz != interfaz_actual
-    if cambio:
-        print(f"\n🔄 [CAMBIO DETECTADO VIA API] {interfaz_actual.upper()} → {nueva_interfaz.upper()}\n")
-        interfaz_actual = nueva_interfaz
-    
-    return jsonify({
-        "status": "ok",
-        "nivel": nivel,
-        "interfaz": nueva_interfaz,
-        "cambio_interfaz": cambio
-    })
+        # Registrar el evento
+        registrar_evento(tipo_evento, duracion, exito)
+        
+        # Evaluar y clasificar usando lógica difusa
+        interfaz, nivel = evaluar_y_asignar()
+        
+        # Determinar nueva interfaz basada en el nivel
+        nueva_interfaz = ""
+        if nivel < 40:
+            nueva_interfaz = "novato"
+        elif 40 <= nivel < 70:
+            nueva_interfaz = "intermedio"
+        else:
+            nueva_interfaz = "experto"
+        
+        # Verificar si hubo cambio de interfaz
+        cambio = nueva_interfaz != interfaz_actual
+        if cambio:
+            print(f"\n🔄 [CAMBIO DETECTADO VIA API] {interfaz_actual.upper()} → {nueva_interfaz.upper()}")
+            print(f"   Nivel: {nivel:.2f}\n")
+            interfaz_actual = nueva_interfaz
+        
+        return jsonify({
+            "status": "ok",
+            "nivel": round(nivel, 2),
+            "interfaz": nueva_interfaz,
+            "cambio_interfaz": cambio,
+            "mensaje": f"Evento registrado. Nivel: {nivel:.2f}"
+        })
+        
+    except Exception as e:
+        print(f"❌ Error en evento_api: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({
+            "status": "error",
+            "mensaje": f"Error al procesar evento: {str(e)}"
+        }), 500
 
 @app.route("/api/estado", methods=["GET"])
 def obtener_estado():
     """Obtiene el estado actual del sistema"""
     archivo = "data/dataset_pos.csv"
     
-    if not os.path.exists(archivo):
+    try:
+        if not os.path.exists(archivo):
+            return jsonify({
+                "eventos": 0,
+                "tiempo_promedio": 0,
+                "errores": 0,
+                "tareas": 0,
+                "nivel": "Novato",
+                "interfaz": "original"
+            })
+        
+        df = pd.read_csv(archivo)
+        if df.empty or len(df) == 0:
+            return jsonify({
+                "eventos": 0,
+                "tiempo_promedio": 0,
+                "errores": 0,
+                "tareas": 0,
+                "nivel": "Novato",
+                "interfaz": "original"
+            })
+        
+        # Verificar si hay datos válidos
+        primera_fila = df.iloc[0]
+        sesion_id = str(primera_fila.get('SesionID', '')).strip()
+        if not sesion_id or sesion_id == '' or sesion_id.lower() == 'nan':
+            return jsonify({
+                "eventos": 0,
+                "tiempo_promedio": 0,
+                "errores": 0,
+                "tareas": 0,
+                "nivel": "Novato",
+                "interfaz": "original"
+            })
+        
+        # Leer métricas
+        tiempo_prom = pd.to_numeric(df['TiempoPromedioAccion(s)'].iloc[0], errors='coerce') or 0
+        errores = pd.to_numeric(df['ErroresSesion'].iloc[0], errors='coerce') or 0
+        tareas = pd.to_numeric(df['TareasCompletadas'].iloc[0], errors='coerce') or 0
+        nivel_texto = str(df['NivelClasificado'].iloc[0]) if 'NivelClasificado' in df.columns else "Novato"
+        
+        eventos_totales = int(errores) + int(tareas)
+        
+        # Determinar interfaz actual
+        if eventos_totales == 0:
+            interfaz_actual = "original"
+        else:
+            # Evaluar para obtener el nivel numérico
+            try:
+                interfaz, nivel = evaluar_y_asignar()
+                if nivel < 40:
+                    interfaz_actual = "novato"
+                elif nivel < 70:
+                    interfaz_actual = "intermedio"
+                else:
+                    interfaz_actual = "experto"
+            except:
+                interfaz_actual = nivel_texto.lower() if nivel_texto else "novato"
+        
+        return jsonify({
+            "eventos": eventos_totales,
+            "tiempo_promedio": float(tiempo_prom),
+            "errores": int(errores),
+            "tareas": int(tareas),
+            "nivel": nivel_texto,
+            "interfaz": interfaz_actual
+        })
+        
+    except Exception as e:
+        print(f"❌ Error en obtener_estado: {e}")
         return jsonify({
             "eventos": 0,
             "tiempo_promedio": 0,
             "errores": 0,
             "tareas": 0,
-            "nivel": "Novato"
-        })
-    
-    df = pd.read_csv(archivo)
-    if df.empty:
-        return jsonify({
-            "eventos": 0,
-            "tiempo_promedio": 0,
-            "errores": 0,
-            "tareas": 0,
-            "nivel": "Novato"
-        })
-    
-    return jsonify({
-        "eventos": int(df['ErroresSesion'].iloc[0] + df['TareasCompletadas'].iloc[0]),
-        "tiempo_promedio": float(df['TiempoPromedioAccion(s)'].iloc[0]),
-        "errores": int(df['ErroresSesion'].iloc[0]),
-        "tareas": int(df['TareasCompletadas'].iloc[0]),
-        "nivel": str(df['NivelClasificado'].iloc[0])
-    })
+            "nivel": "Novato",
+            "interfaz": "original",
+            "error": str(e)
+        }), 500
 
 # Rutas para cada interfaz principal
 @app.route("/novato")

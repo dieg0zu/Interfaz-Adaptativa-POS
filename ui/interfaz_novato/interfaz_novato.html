@@ -738,6 +738,8 @@
         };
 
         function addToCart() {
+            const inicio = performance.now();
+            
             const existingItem = cart.find(item => item.id === product.id);
             
             if (existingItem) {
@@ -751,19 +753,42 @@
             }
             
             renderCart();
+            
+            // Registrar evento de agregar producto al carrito
+            const duracion = (performance.now() - inicio) / 1000;
+            if (window.registrarExito) {
+                window.registrarExito('agregar_producto_carrito', Math.max(0.1, duracion));
+            }
         }
 
         function updateQuantity(id, delta) {
+            const inicio = performance.now();
+            
             const item = cart.find(item => item.id === id);
             if (item) {
                 item.quantity = Math.max(1, item.quantity + delta);
                 renderCart();
+                
+                // Registrar evento de actualizar cantidad
+                const duracion = (performance.now() - inicio) / 1000;
+                const accion = delta > 0 ? 'aumentar_cantidad' : 'disminuir_cantidad';
+                if (window.registrarExito) {
+                    window.registrarExito(accion, Math.max(0.1, duracion));
+                }
             }
         }
 
         function removeItem(id) {
+            const inicio = performance.now();
+            
             cart = cart.filter(item => item.id !== id);
             renderCart();
+            
+            // Registrar evento de eliminar producto
+            const duracion = (performance.now() - inicio) / 1000;
+            if (window.registrarExito) {
+                window.registrarExito('eliminar_producto_carrito', Math.max(0.1, duracion));
+            }
         }
 
         function updateNote(id, note) {
@@ -827,10 +852,23 @@
         }
 
         function goToPayment() {
-            if (cart.length === 0) return;
+            const inicio = performance.now();
+            
+            if (cart.length === 0) {
+                if (window.registrarError) {
+                    window.registrarError('intento_pago_sin_productos', 0);
+                }
+                return;
+            }
             
             // Guardar el carrito en localStorage para pasarlo a la página de pago
             localStorage.setItem('posCart', JSON.stringify(cart));
+            
+            // Registrar evento de ir a pago
+            const duracion = (performance.now() - inicio) / 1000;
+            if (window.registrarExito) {
+                window.registrarExito('ir_a_pago', Math.max(0.1, duracion));
+            }
             
             // Redirigir a la página de pago usando la ruta de Flask
             window.location.href = "{{ url_for('novato_pago') }}";

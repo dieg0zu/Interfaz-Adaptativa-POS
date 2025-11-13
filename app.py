@@ -34,20 +34,21 @@ def home():
         return redirect(url_for("original"))
     
     # Verificar si hay una fila válida con datos
+    # Leer la ÚLTIMA fila (sesión actual), no la primera
     try:
-        # Verificar si la primera fila tiene valores válidos
-        primera_fila = df.iloc[0]
+        # Verificar si la última fila tiene valores válidos (sesión actual)
+        ultima_fila = df.iloc[-1]
         
         # Verificar si SesionID está vacío o es NaN (indica fila vacía)
-        sesion_id = str(primera_fila.get('SesionID', '')).strip()
+        sesion_id = str(ultima_fila.get('SesionID', '')).strip()
         if not sesion_id or sesion_id == '' or sesion_id.lower() == 'nan':
             print(f"\n{'='*60}")
             print(f"🆕 CSV SOLO CON ENCABEZADO - Mostrando interfaz original")
             print(f"{'='*60}")
             return redirect(url_for("original"))
         
-        errores = pd.to_numeric(primera_fila.get('ErroresSesion', 0), errors='coerce')
-        tareas = pd.to_numeric(primera_fila.get('TareasCompletadas', 0), errors='coerce')
+        errores = pd.to_numeric(ultima_fila.get('ErroresSesion', 0), errors='coerce')
+        tareas = pd.to_numeric(ultima_fila.get('TareasCompletadas', 0), errors='coerce')
         
         # Si son NaN, convertirlos a 0
         if pd.isna(errores):
@@ -133,7 +134,9 @@ def evento():
 
 @app.route("/api/evento", methods=["POST"])
 def evento_api():
-    """Endpoint API para registrar eventos (AJAX)"""
+    """Endpoint API para registrar eventos (AJAX)
+    Solo evalúa y cambia de interfaz cuando se completa una venta (compra_finalizada)
+    """
     global interfaz_actual
     
     try:
@@ -143,33 +146,76 @@ def evento_api():
         exito = data.get("exito", True)
 
         # Registrar el evento
-        registrar_evento(tipo_evento, duracion, exito)
+        resultado = registrar_evento(tipo_evento, duracion, exito)
+        es_compra_finalizada = resultado[0]
+        sesion_id = resultado[1]
+        datos_sesion_completada = resultado[2] if len(resultado) > 2 else None
         
-        # Evaluar y clasificar usando lógica difusa
-        interfaz, nivel = evaluar_y_asignar()
+        # SOLO evaluar y clasificar si se completó una venta
+        cambio = False
+        nueva_interfaz = interfaz_actual
+        nivel = 0
         
-        # Determinar nueva interfaz basada en el nivel
-        nueva_interfaz = ""
-        if nivel < 40:
-            nueva_interfaz = "novato"
-        elif 40 <= nivel < 70:
-            nueva_interfaz = "intermedio"
+        if es_compra_finalizada:
+            print(f"\n{'='*60}")
+            print(f"💰 VENTA COMPLETADA - Evaluando clasificación...")
+            print(f"   Sesión completada: {sesion_id}")
+            print(f"{'='*60}")
+            
+            # Evaluar y clasificar usando lógica difusa
+            # evaluar_y_asignar leerá la última fila que ahora es la sesión completada
+            # (antes de que se agregue la nueva sesión vacía)
+            interfaz, nivel = evaluar_y_asignar()
+            
+            # Determinar nueva interfaz basada en el nivel
+            if nivel < 40:
+                nueva_interfaz = "novato"
+            elif 40 <= nivel < 70:
+                nueva_interfaz = "intermedio"
+            else:
+                nueva_interfaz = "experto"
+            
+            # Verificar si hubo cambio de interfaz
+            cambio = nueva_interfaz != interfaz_actual
+            if cambio:
+                print(f"\n🔄 [CAMBIO DE INTERFAZ] {interfaz_actual.upper()} → {nueva_interfaz.upper()}")
+                print(f"   Nivel: {nivel:.2f}")
+                print(f"   Sesión completada: {sesion_id}")
+                print(f"{'='*60}\n")
+                interfaz_actual = nueva_interfaz
+            else:
+                print(f"   Nivel actual: {nivel:.2f} → Interfaz: {nueva_interfaz.upper()} (sin cambios)")
+                print(f"   Sesión completada: {sesion_id}")
+                print(f"{'='*60}\n")
+            
+            # AHORA crear la nueva sesión vacía para la próxima venta
+            from src.logger import generar_nueva_sesion_id
+            import pandas as pd
+            
+            nueva_sesion_id = generar_nueva_sesion_id()
+            df = pd.read_csv("data/dataset_pos.csv")
+            nueva_fila = pd.DataFrame([{
+                'SesionID': nueva_sesion_id,
+                'TiempoPromedioAccion(s)': 0,
+                'ErroresSesion': 0,
+                'TareasCompletadas': 0,
+                'NivelClasificado': nueva_interfaz.capitalize()  # Usar el nivel recién calculado
+            }])
+            df = pd.concat([df, nueva_fila], ignore_index=True)
+            df.to_csv("data/dataset_pos.csv", index=False)
+            
+            print(f"[LOGGER] 🆕 Nueva sesión iniciada: {nueva_sesion_id}")
         else:
-            nueva_interfaz = "experto"
-        
-        # Verificar si hubo cambio de interfaz
-        cambio = nueva_interfaz != interfaz_actual
-        if cambio:
-            print(f"\n🔄 [CAMBIO DETECTADO VIA API] {interfaz_actual.upper()} → {nueva_interfaz.upper()}")
-            print(f"   Nivel: {nivel:.2f}\n")
-            interfaz_actual = nueva_interfaz
+            # Para eventos normales, solo registrar sin evaluar
+            print(f"[EVENTO] {tipo_evento} registrado (sin evaluación - esperando finalizar venta)")
         
         return jsonify({
             "status": "ok",
-            "nivel": round(nivel, 2),
+            "nivel": round(nivel, 2) if es_compra_finalizada else None,
             "interfaz": nueva_interfaz,
             "cambio_interfaz": cambio,
-            "mensaje": f"Evento registrado. Nivel: {nivel:.2f}"
+            "sesion_id": sesion_id,
+            "mensaje": f"Evento registrado. {'Evaluación completada.' if es_compra_finalizada else 'Esperando finalizar venta para evaluar.'}"
         })
         
     except Exception as e:
@@ -208,9 +254,9 @@ def obtener_estado():
                 "interfaz": "original"
             })
         
-        # Verificar si hay datos válidos
-        primera_fila = df.iloc[0]
-        sesion_id = str(primera_fila.get('SesionID', '')).strip()
+        # Verificar si hay datos válidos - leer la ÚLTIMA fila (sesión actual)
+        ultima_fila = df.iloc[-1]
+        sesion_id = str(ultima_fila.get('SesionID', '')).strip()
         if not sesion_id or sesion_id == '' or sesion_id.lower() == 'nan':
             return jsonify({
                 "eventos": 0,
@@ -221,11 +267,11 @@ def obtener_estado():
                 "interfaz": "original"
             })
         
-        # Leer métricas
-        tiempo_prom = pd.to_numeric(df['TiempoPromedioAccion(s)'].iloc[0], errors='coerce') or 0
-        errores = pd.to_numeric(df['ErroresSesion'].iloc[0], errors='coerce') or 0
-        tareas = pd.to_numeric(df['TareasCompletadas'].iloc[0], errors='coerce') or 0
-        nivel_texto = str(df['NivelClasificado'].iloc[0]) if 'NivelClasificado' in df.columns else "Novato"
+        # Leer métricas de la última fila (sesión actual)
+        tiempo_prom = pd.to_numeric(ultima_fila.get('TiempoPromedioAccion(s)', 0), errors='coerce') or 0
+        errores = pd.to_numeric(ultima_fila.get('ErroresSesion', 0), errors='coerce') or 0
+        tareas = pd.to_numeric(ultima_fila.get('TareasCompletadas', 0), errors='coerce') or 0
+        nivel_texto = str(ultima_fila.get('NivelClasificado', 'Novato')) if 'NivelClasificado' in ultima_fila else "Novato"
         
         eventos_totales = int(errores) + int(tareas)
         
@@ -296,6 +342,11 @@ def experto_pago():
 def original():
     """Interfaz original de Wally POS (pantalla inicial sin datos)"""
     return render_template("interfaz_original.html")
+
+@app.route("/original/pago")
+def original_pago():
+    """Pantalla de pago para la interfaz original"""
+    return render_template("interfaz_original_2.html")
 
 @app.route("/reset", methods=["POST", "GET"])
 def reset():

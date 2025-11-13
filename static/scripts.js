@@ -107,14 +107,22 @@ class POSTracker {
         .then(response => response.json())
         .then(data => {
             if (data.status === 'ok') {
-                console.log(`[TRACKER] Evento registrado. Nivel: ${data.nivel}, Interfaz: ${data.interfaz}`);
-                
-                if (data.cambio_interfaz) {
-                    console.log(`[CAMBIO DETECTADO] Cambiando a interfaz: ${data.interfaz}`);
-                    this.mostrarNotificacionCambio(data.interfaz);
-                    setTimeout(() => {
-                        window.location.href = `/${data.interfaz}`;
-                    }, 2000);
+                // Solo mostrar información si se completó una venta
+                if (data.nivel !== null && data.nivel !== undefined) {
+                    console.log(`[TRACKER] ✅ Venta completada. Nivel: ${data.nivel}, Interfaz: ${data.interfaz}`);
+                    
+                    if (data.cambio_interfaz) {
+                        console.log(`[CAMBIO DETECTADO] Cambiando a interfaz: ${data.interfaz}`);
+                        this.mostrarNotificacionCambio(data.interfaz);
+                        setTimeout(() => {
+                            window.location.href = `/${data.interfaz}`;
+                        }, 2000);
+                    } else {
+                        console.log(`[TRACKER] Sin cambio de interfaz. Nivel actual: ${data.nivel}`);
+                    }
+                } else {
+                    // Evento normal (durante el proceso) - solo registrar sin evaluar
+                    console.log(`[TRACKER] Evento registrado: ${tipo} (esperando finalizar venta para evaluar)`);
                 }
             } else {
                 console.error('[TRACKER] Error al registrar evento:', data.mensaje);

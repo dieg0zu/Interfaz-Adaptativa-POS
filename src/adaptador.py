@@ -22,9 +22,11 @@ def evaluar_y_asignar():
         return "Novato → Interfaz simplificada", 30.0
     
     # Verificar si la fila tiene datos válidos (no solo encabezado)
+    # Leer la ÚLTIMA fila (sesión actual), no la primera
     try:
-        primera_fila = df.iloc[0]
-        sesion_id = str(primera_fila.get('SesionID', '')).strip()
+        # Obtener la última fila (sesión actual)
+        ultima_fila = df.iloc[-1]
+        sesion_id = str(ultima_fila.get('SesionID', '')).strip()
         if not sesion_id or sesion_id == '' or sesion_id.lower() == 'nan':
             print("[ADAPTADOR] CSV solo con encabezado → NOVATO (default)")
             return "Novato → Interfaz simplificada", 30.0
@@ -33,9 +35,10 @@ def evaluar_y_asignar():
         return "Novato → Interfaz simplificada", 30.0
     
     # ========== LEER MÉTRICAS DIRECTAMENTE ==========
-    tiempo_prom = pd.to_numeric(df['TiempoPromedioAccion(s)'].iloc[0], errors='coerce') or 0
-    errores = pd.to_numeric(df['ErroresSesion'].iloc[0], errors='coerce') or 0
-    tareas = pd.to_numeric(df['TareasCompletadas'].iloc[0], errors='coerce') or 0
+    # Leer métricas de la última fila (sesión actual)
+    tiempo_prom = pd.to_numeric(ultima_fila.get('TiempoPromedioAccion(s)', 0), errors='coerce') or 0
+    errores = pd.to_numeric(ultima_fila.get('ErroresSesion', 0), errors='coerce') or 0
+    tareas = pd.to_numeric(ultima_fila.get('TareasCompletadas', 0), errors='coerce') or 0
     
     # Convertir NaN a 0
     if pd.isna(tiempo_prom):
@@ -142,9 +145,12 @@ def evaluar_y_asignar():
         return interfaz_fallback, nivel_fallback
 
 def actualizar_nivel_clasificado(interfaz, archivo):
-    """Actualiza la columna NivelClasificado en el CSV"""
+    """Actualiza la columna NivelClasificado en el CSV (última fila - sesión actual o completada)"""
     try:
         df = pd.read_csv(archivo)
+        
+        if df.empty or len(df) == 0:
+            return
         
         # Determinar nivel basado en la interfaz asignada
         if "novato" in interfaz.lower():
@@ -159,13 +165,28 @@ def actualizar_nivel_clasificado(interfaz, archivo):
         
         # Asegurar que la columna existe
         if 'NivelClasificado' not in df.columns:
-            df['NivelClasificado'] = nivel_texto
+            df['NivelClasificado'] = ''
+        
+        # Actualizar SOLO la última fila (sesión actual o completada)
+        # Si hay más de una fila y la última tiene 0 eventos, actualizar la penúltima (sesión completada)
+        if len(df) > 1:
+            ultima_fila = df.iloc[-1]
+            eventos_ultima = int(ultima_fila.get('ErroresSesion', 0) or 0) + int(ultima_fila.get('TareasCompletadas', 0) or 0)
+            if eventos_ultima == 0:
+                # La última fila es la nueva sesión vacía, actualizar la penúltima (sesión completada)
+                df.iloc[-2, df.columns.get_loc('NivelClasificado')] = nivel_texto
+                print(f"📝 Nivel actualizado en CSV (sesión completada, penúltima fila): {nivel_texto}")
+            else:
+                # La última fila es la sesión actual, actualizarla
+                df.iloc[-1, df.columns.get_loc('NivelClasificado')] = nivel_texto
+                print(f"📝 Nivel actualizado en CSV (sesión actual, última fila): {nivel_texto}")
         else:
-            df['NivelClasificado'] = nivel_texto
+            # Solo hay una fila, actualizarla
+            df.iloc[-1, df.columns.get_loc('NivelClasificado')] = nivel_texto
+            print(f"📝 Nivel actualizado en CSV (única fila): {nivel_texto}")
         
         # Guardar el CSV
         df.to_csv(archivo, index=False)
-        print(f"📝 Nivel actualizado en CSV: {nivel_texto}")
         
     except Exception as e:
         print(f"⚠️  Error al actualizar nivel en CSV: {e}")

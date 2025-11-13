@@ -573,7 +573,7 @@
                 <div class="container">
                     <div class="header">
                         <h1>Pago</h1>
-                        <button class="close-btn">✕</button>
+                        <button class="close-btn" onclick="goBack()">✕</button>
                     </div>
 
                     <div class="tabs">
@@ -655,8 +655,8 @@
                             </div>
                         </div>
                         <div class="document-types hidden" id="documentTypes">
-                            <button class="document-btn">Comprobante electrónico</button>
-                            <button class="document-btn">Nota de venta</button>
+                            <button class="document-btn" onclick="finalizarCompra('electronico')">Comprobante electrónico</button>
+                            <button class="document-btn" onclick="finalizarCompra('nota')">Nota de venta</button>
                         </div>
                     </div>
                 </div>
@@ -665,7 +665,20 @@
     </div>
 
     <script>
+        let selectedPaymentMethod = null;
+        let cart = [];
+
+        // Cargar carrito desde localStorage
+        function loadCart() {
+            const cartData = localStorage.getItem('posCartOriginal');
+            if (cartData) {
+                cart = JSON.parse(cartData);
+            }
+        }
+
         function selectPayment(element, paymentType) {
+            selectedPaymentMethod = paymentType;
+            
             // Remover selección previa
             document.querySelectorAll('.payment-method').forEach(method => {
                 method.classList.remove('selected');
@@ -680,6 +693,61 @@
                 document.getElementById('documentTypes').classList.remove('hidden');
             }, 300);
         }
+
+        function finalizarCompra(tipoDocumento) {
+            if (!selectedPaymentMethod) {
+                alert('Por favor selecciona un método de pago');
+                return;
+            }
+
+            const tipoTexto = tipoDocumento === 'electronico' ? 'Comprobante Electrónico' : 'Nota de Venta';
+            alert(`¡Compra finalizada!\nTipo: ${tipoTexto}\nMétodo: ${selectedPaymentMethod}`);
+            
+            // Registrar evento de compra finalizada
+            fetch("{{ url_for('evento_api') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    tipo_evento: 'compra_finalizada',
+                    duracion: 0,
+                    exito: true
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'ok') {
+                    console.log('Compra registrada exitosamente');
+                    // Limpiar carrito
+                    localStorage.removeItem('posCartOriginal');
+                    
+                    // Si hay cambio de interfaz, el sistema redirigirá automáticamente
+                    if (data.cambio_interfaz) {
+                        setTimeout(() => {
+                            window.location.href = `/${data.interfaz}`;
+                        }, 2000);
+                    } else {
+                        // Volver a la interfaz original
+                        window.location.href = "{{ url_for('original') }}";
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error al registrar compra:', error);
+                // Aún así, volver a la interfaz original
+                localStorage.removeItem('posCartOriginal');
+                window.location.href = "{{ url_for('original') }}";
+            });
+        }
+
+        function goBack() {
+            window.location.href = "{{ url_for('original') }}";
+        }
+
+        // Cargar carrito al iniciar
+        loadCart();
     </script>
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
 </body>
 </html>

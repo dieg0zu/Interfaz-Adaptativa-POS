@@ -671,14 +671,17 @@
                     
                     const inicio = performance.now();
                     
-                    // Registrar evento de intento de cobrar
+                    // Guardar el carrito en localStorage para pasarlo a la página de pago
+                    localStorage.setItem('posCartOriginal', JSON.stringify(saleItems));
+                    
+                    // Registrar evento de ir a pago
                     if (window.registrarExito) {
                         const duracion = (performance.now() - inicio) / 1000;
-                        window.registrarExito('intento_cobrar', Math.max(0.1, duracion));
+                        window.registrarExito('ir_a_pago', Math.max(0.1, duracion));
                     }
                     
-                    // Aquí puedes agregar la lógica para ir a la pantalla de pago
-                    alert('Función de pago en desarrollo');
+                    // Redirigir a la pantalla de pago
+                    window.location.href = "{{ url_for('original_pago') }}";
                 };
             }
         }

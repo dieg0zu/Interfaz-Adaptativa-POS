@@ -1,2 +1,6 @@
 SesionID,TiempoPromedioAccion(s),ErroresSesion,TareasCompletadas,NivelClasificado
-S_ACTUAL,0.1,0,35,Experto
+S_20251113_121504,0.1,0,22,Experto
+S_20251113_121602,0.09,0,9,Intermedio
+S_20251113_121638,0.09,0,9,Intermedio
+S_20251113_121648,0.1,0,58,Experto
+S_20251113_121815,0.1,0,2,Experto

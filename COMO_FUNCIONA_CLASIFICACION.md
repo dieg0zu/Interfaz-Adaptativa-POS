@@ -171,3 +171,12 @@ El sistema te clasificará automáticamente según tu comportamiento! 🎯
 
 
 
+
+
+
+
+
+
+
+
+

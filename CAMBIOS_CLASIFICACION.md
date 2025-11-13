@@ -140,3 +140,12 @@ Este script prueba diferentes escenarios y muestra los resultados de la clasific
 
 
 
+
+
+
+
+
+
+
+
+

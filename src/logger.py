@@ -8,7 +8,7 @@ def generar_nueva_sesion_id():
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     return f"S_{timestamp}"
 
-def registrar_evento(tipo_evento, duracion, exito=True):
+def registrar_evento(tipo_evento, duracion, exito=True, tiempo_activo=None):
     """
     Registra un evento y actualiza las métricas de sesión acumuladas.
     Si el evento es 'compra_finalizada', finaliza la sesión actual y crea una nueva.
@@ -72,12 +72,33 @@ def registrar_evento(tipo_evento, duracion, exito=True):
     eventos_totales += 1
     
     # Calcular nuevo tiempo promedio (promedio ponderado)
-    if eventos_totales == 1:
-        tiempo_nuevo = duracion
+    # PRIORIDAD: Si tenemos tiempo activo, usarlo para calcular mejor el tiempo promedio por acción
+    if tiempo_activo is not None and tiempo_activo > 0 and eventos_totales > 0:
+        # Calcular tiempo promedio basado en tiempo activo total dividido por número de acciones
+        tiempo_promedio_activo = tiempo_activo / eventos_totales
+        
+        # Si el tiempo activo es significativo (usuario lento), usarlo como tiempo promedio
+        # Esto refleja mejor si el usuario es lento en general
+        if tiempo_promedio_activo > 2.0:  # Si el promedio activo es > 2s, el usuario es lento
+            tiempo_nuevo = tiempo_promedio_activo
+        else:
+            # Si el tiempo activo es bajo, usar el máximo entre duración y tiempo activo
+            tiempo_nuevo = max(duracion, tiempo_promedio_activo)
+        
+        # Limitar a máximo 10 segundos (rango del motor difuso)
+        tiempo_nuevo = min(10.0, tiempo_nuevo)
+        
+        print(f"[LOGGER] Tiempo activo usado: {tiempo_activo:.2f}s / {eventos_totales} acciones = {tiempo_promedio_activo:.2f}s promedio")
     else:
-        tiempo_nuevo = ((tiempo_actual * (eventos_totales - 1)) + duracion) / eventos_totales
+        # Si no hay tiempo activo, usar el método tradicional
+        if eventos_totales == 1:
+            tiempo_nuevo = duracion
+        else:
+            tiempo_nuevo = ((tiempo_actual * (eventos_totales - 1)) + duracion) / eventos_totales
+        # Limitar a máximo 10 segundos
+        tiempo_nuevo = min(10.0, tiempo_nuevo)
     
-    # Si es compra finalizada, guardar la sesión actual y crear una nueva
+    # Si es compra finalizada, guardar la sesión actual como NUEVA FILA (no sobrescribir)
     if es_compra_finalizada:
         # Guardar los datos de la sesión completada
         nivel_actual = str(ultima_fila.get('NivelClasificado', 'Novato')) if len(df) > 0 else 'Novato'
@@ -89,18 +110,32 @@ def registrar_evento(tipo_evento, duracion, exito=True):
             'NivelClasificado': nivel_actual
         }
         
-        # Actualizar la última fila con los datos finales de la sesión completada
-        df.loc[df.index[-1], 'SesionID'] = datos_sesion_completada['SesionID']
-        df.loc[df.index[-1], 'TiempoPromedioAccion(s)'] = datos_sesion_completada['TiempoPromedioAccion(s)']
-        df.loc[df.index[-1], 'ErroresSesion'] = datos_sesion_completada['ErroresSesion']
-        df.loc[df.index[-1], 'TareasCompletadas'] = datos_sesion_completada['TareasCompletadas']
-        df.loc[df.index[-1], 'NivelClasificado'] = datos_sesion_completada['NivelClasificado']
+        # Verificar si la última fila es la sesión actual (tiene eventos) o es una sesión vacía
+        eventos_ultima = int(ultima_fila.get('ErroresSesion', 0) or 0) + int(ultima_fila.get('TareasCompletadas', 0) or 0)
+        
+        if eventos_ultima == 0:
+            # La última fila es una sesión vacía, reemplazarla con la sesión completada
+            df.loc[df.index[-1], 'SesionID'] = datos_sesion_completada['SesionID']
+            df.loc[df.index[-1], 'TiempoPromedioAccion(s)'] = datos_sesion_completada['TiempoPromedioAccion(s)']
+            df.loc[df.index[-1], 'ErroresSesion'] = datos_sesion_completada['ErroresSesion']
+            df.loc[df.index[-1], 'TareasCompletadas'] = datos_sesion_completada['TareasCompletadas']
+            df.loc[df.index[-1], 'NivelClasificado'] = datos_sesion_completada['NivelClasificado']
+        else:
+            # La última fila es la sesión actual con eventos
+            # IMPORTANTE: Agregar como NUEVA FILA, no sobrescribir
+            # Primero actualizar la última fila con los datos finales
+            df.loc[df.index[-1], 'SesionID'] = datos_sesion_completada['SesionID']
+            df.loc[df.index[-1], 'TiempoPromedioAccion(s)'] = datos_sesion_completada['TiempoPromedioAccion(s)']
+            df.loc[df.index[-1], 'ErroresSesion'] = datos_sesion_completada['ErroresSesion']
+            df.loc[df.index[-1], 'TareasCompletadas'] = datos_sesion_completada['TareasCompletadas']
+            df.loc[df.index[-1], 'NivelClasificado'] = datos_sesion_completada['NivelClasificado']
         
         # Guardar temporalmente para que evaluar_y_asignar pueda leerla (sin la nueva sesión aún)
         df.to_csv(archivo_sesion, index=False)
         
         print(f"[LOGGER] ✅ Venta completada - Sesión {sesion_actual} finalizada")
         print(f"[LOGGER]   Datos guardados para evaluación")
+        print(f"[LOGGER]   Total de sesiones en CSV: {len(df)}")
         
         # Retornar los datos de la sesión completada para evaluación
         # La nueva sesión se creará DESPUÉS de la evaluación en app.py

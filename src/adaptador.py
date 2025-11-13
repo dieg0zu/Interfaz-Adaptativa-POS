@@ -3,10 +3,13 @@ import os
 from src.motor_difuso import crear_motor_difuso
 from src.asignador_interfaz import asignar_interfaz
 
-def evaluar_y_asignar():
+def evaluar_y_asignar(silencioso=False):
     """
     Evalúa el nivel del usuario basado en métricas acumuladas.
     Lee directamente el formato Dataset_POS.csv
+    
+    Args:
+        silencioso: Si es True, no imprime logs (útil para llamadas durante el proceso)
     """
     archivo = "data/dataset_pos.csv"
     
@@ -50,26 +53,29 @@ def evaluar_y_asignar():
     
     eventos_totales = int(errores) + int(tareas)
     
-    print(f"\n{'='*60}")
-    print(f"🧠 EVALUACIÓN DEL USUARIO")
-    print(f"{'='*60}")
-    print(f"📊 MÉTRICAS ACUMULADAS ({eventos_totales} eventos):")
-    print(f"   • Tiempo Promedio: {tiempo_prom:.2f}s")
-    print(f"   • Errores: {errores}")
-    print(f"   • Tareas Completadas: {tareas}")
-    print(f"{'-'*60}")
+    if not silencioso:
+        print(f"\n{'='*60}")
+        print(f"🧠 EVALUACIÓN DEL USUARIO")
+        print(f"{'='*60}")
+        print(f"📊 MÉTRICAS ACUMULADAS ({eventos_totales} eventos):")
+        print(f"   • Tiempo Promedio: {tiempo_prom:.2f}s")
+        print(f"   • Errores: {errores}")
+        print(f"   • Tareas Completadas: {tareas}")
+        print(f"{'-'*60}")
     
     # ========== CASOS ESPECIALES ==========
     
     # Usuario completamente nuevo (0 eventos)
     if eventos_totales == 0:
-        print("🆕 Usuario nuevo → NOVATO (sin datos para evaluar)")
-        print(f"{'='*60}\n")
+        if not silencioso:
+            print("🆕 Usuario nuevo → NOVATO (sin datos para evaluar)")
+            print(f"{'='*60}\n")
         return "Novato → Interfaz simplificada", 30.0
     
     # ========== EVALUACIÓN CON LÓGICA DIFUSA ==========
     # Siempre usar lógica difusa cuando hay al menos 1 evento
-    print(f"✅ Evaluación con lógica difusa ({eventos_totales} eventos)")
+    if not silencioso:
+        print(f"✅ Evaluación con lógica difusa ({eventos_totales} eventos)")
     
     motor = crear_motor_difuso()
     
@@ -86,10 +92,11 @@ def evaluar_y_asignar():
     motor.input['ErroresSesion'] = errores_normalizados
     motor.input['TareasCompletadas'] = tareas_normalizadas
     
-    print(f"📥 INPUTS AL MOTOR DIFUSO:")
-    print(f"   • Tiempo: {tiempo_normalizado:.2f}s (normalizado)")
-    print(f"   • Errores: {errores_normalizados}")
-    print(f"   • Tareas: {tareas_normalizadas}")
+    if not silencioso:
+        print(f"📥 INPUTS AL MOTOR DIFUSO:")
+        print(f"   • Tiempo: {tiempo_normalizado:.2f}s (normalizado)")
+        print(f"   • Errores: {errores_normalizados}")
+        print(f"   • Tareas: {tareas_normalizadas}")
     
     try:
         # Ejecutar inferencia difusa
@@ -110,11 +117,12 @@ def evaluar_y_asignar():
         else:
             confianza = "Alta"
         
-        print(f"🎯 RESULTADO DE CLASIFICACIÓN:")
-        print(f"   • Nivel Difuso: {nivel:.2f} / 100")
-        print(f"   • Interfaz Asignada: {interfaz}")
-        print(f"   • Confianza: {confianza} ({eventos_totales} eventos)")
-        print(f"{'='*60}\n")
+        if not silencioso:
+            print(f"🎯 RESULTADO DE CLASIFICACIÓN:")
+            print(f"   • Nivel Difuso: {nivel:.2f} / 100")
+            print(f"   • Interfaz Asignada: {interfaz}")
+            print(f"   • Confianza: {confianza} ({eventos_totales} eventos)")
+            print(f"{'='*60}\n")
         
         # Actualizar el nivel clasificado en el CSV
         actualizar_nivel_clasificado(interfaz, archivo)

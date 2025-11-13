@@ -10,19 +10,43 @@ class POSTracker {
         this.ultimaEvaluacion = Date.now();
         this.intervaloEvaluacion = 30000; // Evaluar cada 30 segundos
         
+        // Tracking de tiempo activo
+        this.primerClickTiempo = null; // Timestamp del primer click de la sesión
+        this.ultimoClickTiempo = null; // Timestamp del último click
+        this.tiempoInactividadMax = 30000; // 30 segundos de inactividad = pausa
+        this.tiempoActivoTotal = 0; // Tiempo total activo acumulado
+        this.tiempoUltimaAccion = null; // Timestamp de la última acción
+        
         this.inicializar();
     }
 
     inicializar() {
         console.log('[TRACKER] Sistema de tracking inicializado');
         
-        // Rastrear todos los botones y acciones
+        // Rastrear TODOS los clicks (no solo elementos específicos)
+        // Esto permite detectar clicks incorrectos en áreas vacías
         document.addEventListener('click', (e) => {
-            const elemento = e.target.closest('button, .btn, [data-accion], a[href="#"], .product-card, .category-card');
-            if (elemento) {
-                // No registrar si es un elemento específico que ya tiene su propio tracking
+            const elemento = e.target;
+            
+            // Verificar si es un elemento interactivo válido
+            const esInteractivoValido = elemento.closest('button') || 
+                                       elemento.closest('.btn') || 
+                                       elemento.closest('[data-accion]') || 
+                                       elemento.closest('a[href]') || 
+                                       elemento.closest('.product-card') || 
+                                       elemento.closest('.category-card') ||
+                                       elemento.closest('[onclick]') ||
+                                       elemento.onclick ||
+                                       elemento.dataset.accion;
+            
+            // Si NO es interactivo válido, es un error (click incorrecto)
+            if (!esInteractivoValido) {
+                // Click en área vacía o elemento no interactivo = ERROR
+                this.registrarAccion(elemento, true); // true = es error
+            } else {
+                // Es un elemento válido, registrar normalmente
                 if (!elemento.hasAttribute('data-tracked')) {
-                    this.registrarAccion(elemento);
+                    this.registrarAccion(elemento, false); // false = no es error
                 }
             }
         });
@@ -44,7 +68,8 @@ class POSTracker {
         }
     }
 
-    registrarAccion(elemento) {
+    registrarAccion(elemento, esErrorForzado = null) {
+        const ahora = Date.now();
         const inicio = performance.now();
         
         // Determinar tipo de acción
@@ -63,21 +88,109 @@ class POSTracker {
             }
         }
         
-        // Simular duración de la acción (medición real)
-        setTimeout(() => {
-            const duracion = (performance.now() - inicio) / 1000;
+        // Detectar si fue un error (mejorado)
+        // Si esErrorForzado es null, usar detección automática
+        const esError = esErrorForzado !== null ? esErrorForzado : this.detectarError(elemento, accion);
+        
+        // Gestionar tiempo activo
+        if (this.primerClickTiempo === null) {
+            // Primer click de la sesión - iniciar tracking
+            this.primerClickTiempo = ahora;
+            this.ultimoClickTiempo = ahora;
+            this.tiempoUltimaAccion = ahora;
+            this.tiempoActivoTotal = 0; // Resetear tiempo activo
+            console.log(`[TRACKER] 🆕 Sesión iniciada - Primer click registrado`);
+        } else {
+            // Calcular tiempo desde la última acción
+            const tiempoDesdeUltimaAccion = ahora - this.tiempoUltimaAccion;
             
-            // Detectar si fue un error
-            const esError = elemento.classList.contains('error') || 
-                          elemento.closest('.error') !== null ||
-                          elemento.disabled;
-            
-            // Solo registrar si la duración es razonable (evitar clicks muy rápidos accidentales)
-            if (duracion > 0.05) {
-                this.enviarEvento(accion, duracion, !esError);
-                console.log(`[TRACKER] ${accion} - ${duracion.toFixed(2)}s - ${esError ? 'ERROR' : 'OK'}`);
+            if (tiempoDesdeUltimaAccion > this.tiempoInactividadMax) {
+                // Hubo inactividad (más de 30 segundos), no contar ese tiempo
+                console.log(`[TRACKER] ⏸️ Inactividad detectada: ${(tiempoDesdeUltimaAccion / 1000).toFixed(1)}s - No contado`);
+            } else {
+                // Tiempo activo: agregar al total
+                this.tiempoActivoTotal += tiempoDesdeUltimaAccion;
             }
+            
+            this.ultimoClickTiempo = ahora;
+            this.tiempoUltimaAccion = ahora;
+        }
+        
+        // Calcular duración de la acción (tiempo real de procesamiento, no tiempo de espera)
+        setTimeout(() => {
+            const duracionProcesamiento = (performance.now() - inicio) / 1000;
+            
+            // Calcular tiempo activo desde el primer click hasta ahora (sin períodos de inactividad)
+            const tiempoActivoSesion = this.tiempoActivoTotal / 1000; // Convertir a segundos
+            
+            // Usar el tiempo de procesamiento de la acción, pero también registrar tiempo activo
+            const duracion = Math.max(0.1, duracionProcesamiento);
+            
+            this.enviarEvento(accion, duracion, !esError, tiempoActivoSesion);
+            console.log(`[TRACKER] ${accion} - ${duracion.toFixed(2)}s - Tiempo activo: ${tiempoActivoSesion.toFixed(1)}s - ${esError ? 'ERROR' : 'OK'}`);
         }, 50);
+    }
+    
+    detectarError(elemento, accion) {
+        // Detectar errores más agresivamente
+        let esError = false;
+        
+        // Errores obvios
+        if (elemento.classList.contains('error') || 
+            elemento.closest('.error') !== null ||
+            elemento.disabled) {
+            esError = true;
+        }
+        
+        // NO considerar error: eliminar producto (es una acción válida)
+        if (accion.includes('eliminar') || 
+            accion.includes('remove') ||
+            elemento.classList.contains('icon-btn') && elemento.textContent.includes('🗑️')) {
+            return false; // Eliminar es una acción válida, no un error
+        }
+        
+        // Clicks en lugares incorrectos (elementos sin funcionalidad clara)
+        if (accion === 'click_generico') {
+            // Verificar si es un elemento realmente interactivo
+            const esInteractivo = elemento.closest('button') || 
+                                 elemento.closest('.product-card') || 
+                                 elemento.closest('.category-card') ||
+                                 elemento.closest('a') ||
+                                 elemento.closest('[onclick]') ||
+                                 elemento.closest('[data-accion]') ||
+                                 elemento.onclick ||
+                                 elemento.dataset.accion;
+            
+            if (!esInteractivo) {
+                // Click en área vacía o elemento no interactivo = ERROR
+                esError = true;
+            }
+        }
+        
+        // Clicks en elementos que no deberían ser clickeables (texto, imágenes sin acción, etc.)
+        if (elemento.tagName === 'DIV' && 
+            !elemento.onclick && 
+            !elemento.dataset.accion &&
+            !elemento.closest('[onclick]') &&
+            !elemento.closest('.product-card') &&
+            !elemento.closest('.category-card') &&
+            !elemento.closest('button') &&
+            !elemento.closest('a')) {
+            // Es un div sin funcionalidad = ERROR
+            esError = true;
+        }
+        
+        // Clicks en texto plano (p, span, etc.) sin acción asociada
+        if ((elemento.tagName === 'P' || elemento.tagName === 'SPAN' || elemento.tagName === 'DIV') &&
+            !elemento.closest('button') &&
+            !elemento.closest('a') &&
+            !elemento.closest('[onclick]') &&
+            !elemento.closest('.product-card') &&
+            !elemento.closest('.category-card')) {
+            esError = true;
+        }
+        
+        return esError;
     }
 
     registrarSubmit(form) {
@@ -91,7 +204,11 @@ class POSTracker {
         this.enviarEvento(accion, duracion, esValido);
     }
 
-    enviarEvento(tipo, duracion, exito) {
+    enviarEvento(tipo, duracion, exito, tiempoActivoSesion = null) {
+        // El tiempo activo se usará en el backend para calcular mejor el tiempo promedio
+        // Aquí solo enviamos la duración de la acción individual
+        let duracionFinal = Math.max(0.1, duracion);
+        
         // Usar fetch para envío asíncrono
         fetch('/api/evento', {
             method: 'POST',
@@ -100,8 +217,9 @@ class POSTracker {
             },
             body: JSON.stringify({
                 tipo_evento: tipo,
-                duracion: Math.max(0.1, duracion), // Mínimo 0.1 segundos
-                exito: exito
+                duracion: duracionFinal,
+                exito: exito,
+                tiempo_activo: tiempoActivoSesion // Enviar tiempo activo para referencia
             })
         })
         .then(response => response.json())
@@ -114,11 +232,29 @@ class POSTracker {
                     if (data.cambio_interfaz) {
                         console.log(`[CAMBIO DETECTADO] Cambiando a interfaz: ${data.interfaz}`);
                         this.mostrarNotificacionCambio(data.interfaz);
-                        setTimeout(() => {
-                            window.location.href = `/${data.interfaz}`;
-                        }, 2000);
+                        // Resetear tracking para nueva sesión
+                        this.resetTracking();
+                        
+                        // Redirigir inmediatamente si hay cambio
+                        if (data.redirigir && data.url_redireccion) {
+                            setTimeout(() => {
+                                window.location.href = data.url_redireccion;
+                            }, 2000);
+                        } else {
+                            setTimeout(() => {
+                                window.location.href = `/${data.interfaz}`;
+                            }, 2000);
+                        }
                     } else {
                         console.log(`[TRACKER] Sin cambio de interfaz. Nivel actual: ${data.nivel}`);
+                        // Resetear tracking para nueva sesión después de completar venta
+                        if (tipo === 'compra_finalizada') {
+                            this.resetTracking();
+                            // Recargar la página para asegurar que se muestre la interfaz correcta
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1000);
+                        }
                     }
                 } else {
                     // Evento normal (durante el proceso) - solo registrar sin evaluar
@@ -152,6 +288,15 @@ class POSTracker {
         .catch(error => {
             console.error('[ERROR] Verificación fallida:', error);
         });
+    }
+
+    resetTracking() {
+        // Resetear tracking de tiempo activo para nueva sesión
+        this.primerClickTiempo = null;
+        this.ultimoClickTiempo = null;
+        this.tiempoActivoTotal = 0;
+        this.tiempoUltimaAccion = null;
+        console.log(`[TRACKER] 🔄 Tracking reseteado para nueva sesión`);
     }
 
     mostrarNotificacionCambio(nuevaInterfaz) {

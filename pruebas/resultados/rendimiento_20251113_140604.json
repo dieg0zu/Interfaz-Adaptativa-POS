@@ -1,0 +1,1220 @@
+{
+  "timestamp": "2025-11-13T14:06:04.380865",
+  "configuracion": {
+    "base_url": "http://localhost:5000",
+    "num_pruebas": 10
+  },
+  "estadisticas": {
+    "tiempo_promedio_adaptacion_ms": 2245.3484773635864,
+    "desviacion_estandar_ms": 72.65391025432804,
+    "percentil_95_ms": 2436.896562576294,
+    "porcentaje_sobre_1000ms": 100.0,
+    "total_pruebas": 10
+  },
+  "tiempos_adaptacion": [
+    2436.896562576294,
+    2191.715717315674,
+    2266.7744159698486,
+    2240.7028675079346,
+    2267.0936584472656,
+    2208.904027938843,
+    2227.762222290039,
+    2195.1115131378174,
+    2198.7509727478027,
+    2219.7728157043457
+  ],
+  "resultados_detallados": [
+    {
+      "prueba": 1,
+      "eventos": [
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2042.4959659576416,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140154",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2042.4959659576416,
+          "tipo_evento": "agregar_producto_carrito",
+          "tiempo_total": 2042.8287982940674,
+          "timestamp": "2025-11-13T14:03:28.010515"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2077.3863792419434,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140154",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2077.3863792419434,
+          "tipo_evento": "agregar_producto_carrito",
+          "tiempo_total": 2077.5649547576904,
+          "timestamp": "2025-11-13T14:03:30.188487"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2073.6570358276367,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140154",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2073.6570358276367,
+          "tipo_evento": "aumentar_cantidad",
+          "tiempo_total": 2073.7509727478027,
+          "timestamp": "2025-11-13T14:03:32.362739"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2047.231674194336,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140154",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2047.231674194336,
+          "tipo_evento": "eliminar_producto_carrito",
+          "tiempo_total": 2047.386646270752,
+          "timestamp": "2025-11-13T14:03:34.510700"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2056.084156036377,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140154",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2056.084156036377,
+          "tipo_evento": "agregar_producto_carrito",
+          "tiempo_total": 2056.1721324920654,
+          "timestamp": "2025-11-13T14:03:36.667025"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 4910.319805145264,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "novato",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140154",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 4910.319805145264,
+          "tipo_evento": "ir_a_pago",
+          "tiempo_total": 4910.400152206421,
+          "timestamp": "2025-11-13T14:03:41.677572"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2436.7318153381348,
+          "respuesta": {
+            "cambio_interfaz": true,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Evaluación completada.",
+            "nivel": 50.0,
+            "redirigir": true,
+            "sesion_id": "S_20251113_140154",
+            "status": "ok",
+            "url_redireccion": "/intermedio"
+          },
+          "tiempo_adaptacion": 2436.896562576294,
+          "tipo_evento": "compra_finalizada",
+          "tiempo_total": 2436.896562576294,
+          "timestamp": "2025-11-13T14:03:44.217414"
+        }
+      ],
+      "tiempo_total": 18350.107431411743,
+      "timestamp": "2025-11-13T14:03:44.317795"
+    },
+    {
+      "prueba": 2,
+      "eventos": [
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2058.431625366211,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140344",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2058.431625366211,
+          "tipo_evento": "agregar_producto_carrito",
+          "tiempo_total": 2058.546781539917,
+          "timestamp": "2025-11-13T14:03:46.577477"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2049.5755672454834,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140344",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2049.5755672454834,
+          "tipo_evento": "agregar_producto_carrito",
+          "tiempo_total": 2049.6978759765625,
+          "timestamp": "2025-11-13T14:03:48.728353"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2074.6538639068604,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140344",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2074.6538639068604,
+          "tipo_evento": "aumentar_cantidad",
+          "tiempo_total": 2074.788808822632,
+          "timestamp": "2025-11-13T14:03:50.903517"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2079.218626022339,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140344",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2079.218626022339,
+          "tipo_evento": "eliminar_producto_carrito",
+          "tiempo_total": 2079.3368816375732,
+          "timestamp": "2025-11-13T14:03:53.083097"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2091.5184020996094,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140344",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2091.5184020996094,
+          "tipo_evento": "agregar_producto_carrito",
+          "tiempo_total": 2091.827630996704,
+          "timestamp": "2025-11-13T14:03:55.275570"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2091.9735431671143,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140344",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2091.9735431671143,
+          "tipo_evento": "ir_a_pago",
+          "tiempo_total": 2092.095375061035,
+          "timestamp": "2025-11-13T14:03:57.468563"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2191.6327476501465,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Evaluación completada.",
+            "nivel": 50.0,
+            "sesion_id": "S_20251113_140344",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2191.715717315674,
+          "tipo_evento": "compra_finalizada",
+          "tiempo_total": 2191.715717315674,
+          "timestamp": "2025-11-13T14:03:59.760924"
+        }
+      ],
+      "tiempo_total": 15342.641353607178,
+      "timestamp": "2025-11-13T14:03:59.861553"
+    },
+    {
+      "prueba": 3,
+      "eventos": [
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2064.4030570983887,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140359",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2064.4030570983887,
+          "tipo_evento": "agregar_producto_carrito",
+          "tiempo_total": 2064.526081085205,
+          "timestamp": "2025-11-13T14:04:02.127054"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2084.9924087524414,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140359",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2084.9924087524414,
+          "tipo_evento": "agregar_producto_carrito",
+          "tiempo_total": 2085.1168632507324,
+          "timestamp": "2025-11-13T14:04:04.312868"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2079.6492099761963,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140359",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2079.6492099761963,
+          "tipo_evento": "aumentar_cantidad",
+          "tiempo_total": 2079.7274112701416,
+          "timestamp": "2025-11-13T14:04:06.493034"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2058.3910942077637,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140359",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2058.3910942077637,
+          "tipo_evento": "eliminar_producto_carrito",
+          "tiempo_total": 2058.533191680908,
+          "timestamp": "2025-11-13T14:04:08.652255"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2041.5990352630615,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140359",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2041.5990352630615,
+          "tipo_evento": "agregar_producto_carrito",
+          "tiempo_total": 2041.7299270629883,
+          "timestamp": "2025-11-13T14:04:10.794358"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2082.357883453369,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140359",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2082.357883453369,
+          "tipo_evento": "ir_a_pago",
+          "tiempo_total": 2082.4997425079346,
+          "timestamp": "2025-11-13T14:04:12.978566"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2266.446352005005,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Evaluación completada.",
+            "nivel": 50.0,
+            "sesion_id": "S_20251113_140359",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2266.7744159698486,
+          "tipo_evento": "compra_finalizada",
+          "tiempo_total": 2266.7744159698486,
+          "timestamp": "2025-11-13T14:04:15.345965"
+        }
+      ],
+      "tiempo_total": 15383.939266204834,
+      "timestamp": "2025-11-13T14:04:15.446465"
+    },
+    {
+      "prueba": 4,
+      "eventos": [
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2038.0842685699463,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140415",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2038.0842685699463,
+          "tipo_evento": "agregar_producto_carrito",
+          "tiempo_total": 2038.226842880249,
+          "timestamp": "2025-11-13T14:04:17.686230"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2088.0990028381348,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140415",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2088.0990028381348,
+          "tipo_evento": "agregar_producto_carrito",
+          "tiempo_total": 2088.348388671875,
+          "timestamp": "2025-11-13T14:04:19.875234"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2061.4633560180664,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140415",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2061.4633560180664,
+          "tipo_evento": "aumentar_cantidad",
+          "tiempo_total": 2061.603784561157,
+          "timestamp": "2025-11-13T14:04:22.037076"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2069.385528564453,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140415",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2069.385528564453,
+          "tipo_evento": "eliminar_producto_carrito",
+          "tiempo_total": 2069.5347785949707,
+          "timestamp": "2025-11-13T14:04:24.207288"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2062.2687339782715,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140415",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2062.2687339782715,
+          "tipo_evento": "agregar_producto_carrito",
+          "tiempo_total": 2062.46018409729,
+          "timestamp": "2025-11-13T14:04:26.371787"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2053.028106689453,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140415",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2053.028106689453,
+          "tipo_evento": "ir_a_pago",
+          "tiempo_total": 2053.1771183013916,
+          "timestamp": "2025-11-13T14:04:28.525240"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2240.5569553375244,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Evaluación completada.",
+            "nivel": 50.0,
+            "sesion_id": "S_20251113_140415",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2240.7028675079346,
+          "tipo_evento": "compra_finalizada",
+          "tiempo_total": 2240.7028675079346,
+          "timestamp": "2025-11-13T14:04:30.867228"
+        }
+      ],
+      "tiempo_total": 15323.763370513916,
+      "timestamp": "2025-11-13T14:04:30.971760"
+    },
+    {
+      "prueba": 5,
+      "eventos": [
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2081.015110015869,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140430",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2081.015110015869,
+          "tipo_evento": "agregar_producto_carrito",
+          "tiempo_total": 2081.1591148376465,
+          "timestamp": "2025-11-13T14:04:33.253975"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2057.8041076660156,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140430",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2057.8041076660156,
+          "tipo_evento": "agregar_producto_carrito",
+          "tiempo_total": 2057.9373836517334,
+          "timestamp": "2025-11-13T14:04:35.412284"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2064.744710922241,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140430",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2064.744710922241,
+          "tipo_evento": "aumentar_cantidad",
+          "tiempo_total": 2064.9046897888184,
+          "timestamp": "2025-11-13T14:04:37.577666"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2070.878028869629,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140430",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2070.878028869629,
+          "tipo_evento": "eliminar_producto_carrito",
+          "tiempo_total": 2071.0318088531494,
+          "timestamp": "2025-11-13T14:04:39.756343"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2057.61981010437,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140430",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2057.61981010437,
+          "tipo_evento": "agregar_producto_carrito",
+          "tiempo_total": 2057.7645301818848,
+          "timestamp": "2025-11-13T14:04:41.914640"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2074.799060821533,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140430",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2074.799060821533,
+          "tipo_evento": "ir_a_pago",
+          "tiempo_total": 2074.955701828003,
+          "timestamp": "2025-11-13T14:04:44.090113"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2266.798496246338,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Evaluación completada.",
+            "nivel": 50.0,
+            "sesion_id": "S_20251113_140430",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2267.0936584472656,
+          "tipo_evento": "compra_finalizada",
+          "tiempo_total": 2267.0936584472656,
+          "timestamp": "2025-11-13T14:04:46.457500"
+        }
+      ],
+      "tiempo_total": 15385.268449783325,
+      "timestamp": "2025-11-13T14:04:46.558082"
+    },
+    {
+      "prueba": 6,
+      "eventos": [
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2093.1267738342285,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140446",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2093.1267738342285,
+          "tipo_evento": "agregar_producto_carrito",
+          "tiempo_total": 2093.271017074585,
+          "timestamp": "2025-11-13T14:04:48.852696"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2068.8226222991943,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140446",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2068.8226222991943,
+          "tipo_evento": "agregar_producto_carrito",
+          "tiempo_total": 2068.964958190918,
+          "timestamp": "2025-11-13T14:04:51.022555"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2056.8554401397705,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140446",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2056.8554401397705,
+          "tipo_evento": "aumentar_cantidad",
+          "tiempo_total": 2056.9841861724854,
+          "timestamp": "2025-11-13T14:04:53.180015"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2050.25577545166,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140446",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2050.25577545166,
+          "tipo_evento": "eliminar_producto_carrito",
+          "tiempo_total": 2050.400495529175,
+          "timestamp": "2025-11-13T14:04:55.336579"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2087.108612060547,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140446",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2087.108612060547,
+          "tipo_evento": "agregar_producto_carrito",
+          "tiempo_total": 2087.2256755828857,
+          "timestamp": "2025-11-13T14:04:57.533386"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2036.116361618042,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140446",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2036.116361618042,
+          "tipo_evento": "ir_a_pago",
+          "tiempo_total": 2036.2393856048584,
+          "timestamp": "2025-11-13T14:04:59.670022"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2208.8189125061035,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Evaluación completada.",
+            "nivel": 50.0,
+            "sesion_id": "S_20251113_140446",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2208.904027938843,
+          "tipo_evento": "compra_finalizada",
+          "tiempo_total": 2208.904027938843,
+          "timestamp": "2025-11-13T14:05:01.979610"
+        }
+      ],
+      "tiempo_total": 15320.595264434814,
+      "timestamp": "2025-11-13T14:05:02.080008"
+    },
+    {
+      "prueba": 7,
+      "eventos": [
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2098.2162952423096,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140501",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2098.2162952423096,
+          "tipo_evento": "agregar_producto_carrito",
+          "tiempo_total": 2098.3519554138184,
+          "timestamp": "2025-11-13T14:05:04.380650"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2054.9771785736084,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140501",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2054.9771785736084,
+          "tipo_evento": "agregar_producto_carrito",
+          "tiempo_total": 2055.088520050049,
+          "timestamp": "2025-11-13T14:05:06.536562"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2064.969062805176,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140501",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2064.969062805176,
+          "tipo_evento": "aumentar_cantidad",
+          "tiempo_total": 2065.0901794433594,
+          "timestamp": "2025-11-13T14:05:08.704747"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2099.3478298187256,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140501",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2099.3478298187256,
+          "tipo_evento": "eliminar_producto_carrito",
+          "tiempo_total": 2100.548028945923,
+          "timestamp": "2025-11-13T14:05:10.905470"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2053.067684173584,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140501",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2053.067684173584,
+          "tipo_evento": "agregar_producto_carrito",
+          "tiempo_total": 2053.187608718872,
+          "timestamp": "2025-11-13T14:05:13.059251"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2076.197385787964,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140501",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2076.197385787964,
+          "tipo_evento": "ir_a_pago",
+          "tiempo_total": 2076.319456100464,
+          "timestamp": "2025-11-13T14:05:15.235973"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2227.5922298431396,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Evaluación completada.",
+            "nivel": 50.0,
+            "sesion_id": "S_20251113_140501",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2227.762222290039,
+          "tipo_evento": "compra_finalizada",
+          "tiempo_total": 2227.762222290039,
+          "timestamp": "2025-11-13T14:05:17.565287"
+        }
+      ],
+      "tiempo_total": 15383.455514907837,
+      "timestamp": "2025-11-13T14:05:17.665743"
+    },
+    {
+      "prueba": 8,
+      "eventos": [
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2067.683458328247,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140517",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2067.683458328247,
+          "tipo_evento": "agregar_producto_carrito",
+          "tiempo_total": 2067.7871704101562,
+          "timestamp": "2025-11-13T14:05:19.935836"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2072.981119155884,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140517",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2072.981119155884,
+          "tipo_evento": "agregar_producto_carrito",
+          "tiempo_total": 2073.092460632324,
+          "timestamp": "2025-11-13T14:05:22.109164"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2058.0334663391113,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140517",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2058.0334663391113,
+          "tipo_evento": "aumentar_cantidad",
+          "tiempo_total": 2058.149576187134,
+          "timestamp": "2025-11-13T14:05:24.267788"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2074.0339756011963,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140517",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2074.0339756011963,
+          "tipo_evento": "eliminar_producto_carrito",
+          "tiempo_total": 2074.129819869995,
+          "timestamp": "2025-11-13T14:05:26.442374"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2062.4191761016846,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140517",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2062.4191761016846,
+          "tipo_evento": "agregar_producto_carrito",
+          "tiempo_total": 2062.5133514404297,
+          "timestamp": "2025-11-13T14:05:28.605107"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2059.7496032714844,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140517",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2059.7496032714844,
+          "tipo_evento": "ir_a_pago",
+          "tiempo_total": 2059.9842071533203,
+          "timestamp": "2025-11-13T14:05:30.765632"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2195.0292587280273,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Evaluación completada.",
+            "nivel": 50.0,
+            "sesion_id": "S_20251113_140517",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2195.1115131378174,
+          "tipo_evento": "compra_finalizada",
+          "tiempo_total": 2195.1115131378174,
+          "timestamp": "2025-11-13T14:05:33.062611"
+        }
+      ],
+      "tiempo_total": 15295.109987258911,
+      "timestamp": "2025-11-13T14:05:33.163150"
+    },
+    {
+      "prueba": 9,
+      "eventos": [
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2053.3957481384277,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140533",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2053.3957481384277,
+          "tipo_evento": "agregar_producto_carrito",
+          "tiempo_total": 2053.4868240356445,
+          "timestamp": "2025-11-13T14:05:35.419683"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2103.2633781433105,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140533",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2103.2633781433105,
+          "tipo_evento": "agregar_producto_carrito",
+          "tiempo_total": 2103.4114360809326,
+          "timestamp": "2025-11-13T14:05:37.623746"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2056.2965869903564,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140533",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2056.2965869903564,
+          "tipo_evento": "aumentar_cantidad",
+          "tiempo_total": 2056.4494132995605,
+          "timestamp": "2025-11-13T14:05:39.780566"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2076.740503311157,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140533",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2076.740503311157,
+          "tipo_evento": "eliminar_producto_carrito",
+          "tiempo_total": 2076.9190788269043,
+          "timestamp": "2025-11-13T14:05:41.957843"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2043.3480739593506,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140533",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2043.3480739593506,
+          "tipo_evento": "agregar_producto_carrito",
+          "tiempo_total": 2043.47562789917,
+          "timestamp": "2025-11-13T14:05:44.101898"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2054.332494735718,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140533",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2054.332494735718,
+          "tipo_evento": "ir_a_pago",
+          "tiempo_total": 2054.454803466797,
+          "timestamp": "2025-11-13T14:05:46.257000"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2198.5514163970947,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Evaluación completada.",
+            "nivel": 50.0,
+            "sesion_id": "S_20251113_140533",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2198.7509727478027,
+          "tipo_evento": "compra_finalizada",
+          "tiempo_total": 2198.7509727478027,
+          "timestamp": "2025-11-13T14:05:48.559376"
+        }
+      ],
+      "tiempo_total": 15293.842077255249,
+      "timestamp": "2025-11-13T14:05:48.660032"
+    },
+    {
+      "prueba": 10,
+      "eventos": [
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2076.8542289733887,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140548",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2076.8542289733887,
+          "tipo_evento": "agregar_producto_carrito",
+          "tiempo_total": 2076.9693851470947,
+          "timestamp": "2025-11-13T14:05:50.939185"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2064.3556118011475,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140548",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2064.3556118011475,
+          "tipo_evento": "agregar_producto_carrito",
+          "tiempo_total": 2064.466953277588,
+          "timestamp": "2025-11-13T14:05:53.104351"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2073.779582977295,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140548",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2073.779582977295,
+          "tipo_evento": "aumentar_cantidad",
+          "tiempo_total": 2074.1658210754395,
+          "timestamp": "2025-11-13T14:05:55.281325"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2065.234899520874,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140548",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2065.234899520874,
+          "tipo_evento": "eliminar_producto_carrito",
+          "tiempo_total": 2065.3457641601562,
+          "timestamp": "2025-11-13T14:05:57.446952"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2039.4799709320068,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140548",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2039.4799709320068,
+          "tipo_evento": "agregar_producto_carrito",
+          "tiempo_total": 2039.5660400390625,
+          "timestamp": "2025-11-13T14:05:59.587161"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2060.478687286377,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Esperando finalizar venta para evaluar.",
+            "nivel": null,
+            "sesion_id": "S_20251113_140548",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2060.478687286377,
+          "tipo_evento": "ir_a_pago",
+          "tiempo_total": 2060.600996017456,
+          "timestamp": "2025-11-13T14:06:01.748783"
+        },
+        {
+          "exito": true,
+          "tiempo_procesamiento": 2219.6810245513916,
+          "respuesta": {
+            "cambio_interfaz": false,
+            "interfaz": "intermedio",
+            "mensaje": "Evento registrado. Evaluación completada.",
+            "nivel": 50.0,
+            "sesion_id": "S_20251113_140548",
+            "status": "ok"
+          },
+          "tiempo_adaptacion": 2219.7728157043457,
+          "tipo_evento": "compra_finalizada",
+          "tiempo_total": 2219.7728157043457,
+          "timestamp": "2025-11-13T14:06:04.068773"
+        }
+      ],
+      "tiempo_total": 15307.14464187622,
+      "timestamp": "2025-11-13T14:06:04.169357"
+    }
+  ]
+}

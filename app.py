@@ -93,44 +93,11 @@ def home():
 
 @app.route("/evento", methods=["POST"])
 def evento():
-    """Registrar evento y re-evaluar interfaz usando lógica difusa"""
-    global interfaz_actual
-    
-    try:
-        tipo_evento = request.form.get("tipo_evento", "accion_generica")
-        duracion = float(request.form.get("duracion", 0))
-        exito = request.form.get("exito", "true") == "true"
-
-        # Registrar el evento
-        registrar_evento(tipo_evento, duracion, exito)
-        
-        # Evaluar y clasificar usando lógica difusa
-        interfaz, nivel = evaluar_y_asignar()
-
-        # Determinar nueva interfaz basada en el nivel
-        nueva_interfaz = ""
-        if nivel < 40:
-            nueva_interfaz = "novato"
-        elif 40 <= nivel < 70:
-            nueva_interfaz = "intermedio"
-        else:
-            nueva_interfaz = "experto"
-        
-        # Verificar si hubo cambio de interfaz
-        if nueva_interfaz != interfaz_actual:
-            print(f"\n🔄 [CAMBIO DE INTERFAZ] {interfaz_actual.upper()} → {nueva_interfaz.upper()}")
-            print(f"   Nivel: {nivel:.2f}\n")
-            interfaz_actual = nueva_interfaz
-        
-        # Siempre redirigir a la nueva interfaz determinada
-        return redirect(url_for(nueva_interfaz))
-        
-    except Exception as e:
-        print(f"❌ Error en evento: {e}")
-        import traceback
-        traceback.print_exc()
-        # En caso de error, mantener la interfaz actual
-        return redirect(url_for(interfaz_actual))
+    """Registrar evento (ruta antigua - redirige a /api/evento)
+    Esta ruta ya no debería usarse, pero se mantiene por compatibilidad
+    """
+    # Redirigir a la API moderna
+    return redirect(url_for("evento_api"))
 
 @app.route("/api/evento", methods=["POST"])
 def evento_api():
@@ -144,9 +111,10 @@ def evento_api():
         tipo_evento = data.get("tipo_evento", "accion_generica")
         duracion = float(data.get("duracion", 0))
         exito = data.get("exito", True)
+        tiempo_activo = data.get("tiempo_activo", None)  # Tiempo activo de la sesión
 
         # Registrar el evento
-        resultado = registrar_evento(tipo_evento, duracion, exito)
+        resultado = registrar_evento(tipo_evento, duracion, exito, tiempo_activo)
         es_compra_finalizada = resultado[0]
         sesion_id = resultado[1]
         datos_sesion_completada = resultado[2] if len(resultado) > 2 else None
@@ -175,25 +143,33 @@ def evento_api():
             else:
                 nueva_interfaz = "experto"
             
+            # IMPORTANTE: Actualizar interfaz_actual ANTES de verificar el cambio
+            # para que la comparación sea correcta
+            interfaz_anterior = interfaz_actual
+            
             # Verificar si hubo cambio de interfaz
-            cambio = nueva_interfaz != interfaz_actual
+            cambio = nueva_interfaz != interfaz_anterior
             if cambio:
-                print(f"\n🔄 [CAMBIO DE INTERFAZ] {interfaz_actual.upper()} → {nueva_interfaz.upper()}")
+                print(f"\n🔄 [CAMBIO DE INTERFAZ] {interfaz_anterior.upper()} → {nueva_interfaz.upper()}")
                 print(f"   Nivel: {nivel:.2f}")
                 print(f"   Sesión completada: {sesion_id}")
                 print(f"{'='*60}\n")
-                interfaz_actual = nueva_interfaz
+                interfaz_actual = nueva_interfaz  # Actualizar la variable global
             else:
                 print(f"   Nivel actual: {nivel:.2f} → Interfaz: {nueva_interfaz.upper()} (sin cambios)")
                 print(f"   Sesión completada: {sesion_id}")
                 print(f"{'='*60}\n")
+                interfaz_actual = nueva_interfaz  # Actualizar aunque no haya cambio (para mantener consistencia)
             
             # AHORA crear la nueva sesión vacía para la próxima venta
+            # IMPORTANTE: Agregar como NUEVA FILA, no sobrescribir
             from src.logger import generar_nueva_sesion_id
             import pandas as pd
             
             nueva_sesion_id = generar_nueva_sesion_id()
             df = pd.read_csv("data/dataset_pos.csv")
+            
+            # Agregar nueva fila al final (nueva sesión vacía)
             nueva_fila = pd.DataFrame([{
                 'SesionID': nueva_sesion_id,
                 'TiempoPromedioAccion(s)': 0,
@@ -201,22 +177,32 @@ def evento_api():
                 'TareasCompletadas': 0,
                 'NivelClasificado': nueva_interfaz.capitalize()  # Usar el nivel recién calculado
             }])
+            
+            # Concatenar al final (agregar nueva fila)
             df = pd.concat([df, nueva_fila], ignore_index=True)
             df.to_csv("data/dataset_pos.csv", index=False)
             
             print(f"[LOGGER] 🆕 Nueva sesión iniciada: {nueva_sesion_id}")
+            print(f"[LOGGER] 📊 Total de sesiones en CSV: {len(df)}")
         else:
             # Para eventos normales, solo registrar sin evaluar
             print(f"[EVENTO] {tipo_evento} registrado (sin evaluación - esperando finalizar venta)")
         
-        return jsonify({
+        respuesta = {
             "status": "ok",
             "nivel": round(nivel, 2) if es_compra_finalizada else None,
             "interfaz": nueva_interfaz,
             "cambio_interfaz": cambio,
             "sesion_id": sesion_id,
             "mensaje": f"Evento registrado. {'Evaluación completada.' if es_compra_finalizada else 'Esperando finalizar venta para evaluar.'}"
-        })
+        }
+        
+        # Si hay cambio de interfaz, forzar redirección inmediata
+        if cambio and es_compra_finalizada:
+            respuesta["redirigir"] = True
+            respuesta["url_redireccion"] = f"/{nueva_interfaz}"
+        
+        return jsonify(respuesta)
         
     except Exception as e:
         print(f"❌ Error en evento_api: {e}")
@@ -276,18 +262,24 @@ def obtener_estado():
         eventos_totales = int(errores) + int(tareas)
         
         # Determinar interfaz actual
+        # NO evaluar aquí para evitar logs durante el proceso
+        # Solo leer el nivel del CSV si está disponible
         if eventos_totales == 0:
             interfaz_actual = "original"
         else:
-            # Evaluar para obtener el nivel numérico
+            # Leer el nivel del CSV sin evaluar (para no generar logs)
             try:
-                interfaz, nivel = evaluar_y_asignar()
-                if nivel < 40:
+                nivel_texto_lower = nivel_texto.lower() if nivel_texto else "novato"
+                if "novato" in nivel_texto_lower:
                     interfaz_actual = "novato"
-                elif nivel < 70:
+                elif "intermedio" in nivel_texto_lower:
                     interfaz_actual = "intermedio"
-                else:
+                elif "experto" in nivel_texto_lower:
                     interfaz_actual = "experto"
+                else:
+                    # Si no está claro, usar el nivel numérico del CSV
+                    # Pero sin evaluar (para evitar logs)
+                    interfaz_actual = nivel_texto_lower
             except:
                 interfaz_actual = nivel_texto.lower() if nivel_texto else "novato"
         
@@ -315,14 +307,20 @@ def obtener_estado():
 # Rutas para cada interfaz principal
 @app.route("/novato")
 def novato():
+    global interfaz_actual
+    interfaz_actual = "novato"  # Sincronizar con la ruta actual
     return render_template("interfaz_novato/interfaz_novato.html", nivel_actual="novato")
 
 @app.route("/intermedio")
 def intermedio():
+    global interfaz_actual
+    interfaz_actual = "intermedio"  # Sincronizar con la ruta actual
     return render_template("interfaz_intermedio/interfaz_intermedio.html", nivel_actual="intermedio")
 
 @app.route("/experto")
 def experto():
+    global interfaz_actual
+    interfaz_actual = "experto"  # Sincronizar con la ruta actual
     return render_template("interfaz_experto/interfaz_experto.html", nivel_actual="experto")
 
 # Rutas para pantallas de pago

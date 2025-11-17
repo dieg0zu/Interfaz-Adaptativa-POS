@@ -589,17 +589,17 @@
             document.getElementById('actionButtons').classList.add('active');
         }
 
-        function finalizarCompra(tipo) {
+        function finalizarCompra(tipoDocumento) {
             if (!selectedMethod) {
                 alert('Por favor selecciona un método de pago');
                 return;
             }
-
-            const tipoTexto = tipo === 'electronico' ? 'Comprobante Electrónico' : 'Nota de Venta';
-            alert(`¡Compra finalizada!\nTipo: ${tipoTexto}\nMétodo: ${selectedMethod}`);
             
-            // Registrar evento de compra exitosa
-            fetch("{{ url_for('evento_api') }}", {
+            const tipoTexto = tipoDocumento === 'electronico' ? 'Comprobante Electrónico' : 'Nota de Venta';
+            console.log(`[COMPRA] Finalizando compra con ${tipoTexto}`);
+            
+            // Registrar evento de compra exitosa Y ESPERAR LA RESPUESTA
+            fetch('/api/evento', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -609,11 +609,30 @@
                     duracion: 0,
                     exito: true
                 })
-            });
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('[COMPRA] Respuesta del servidor:', data);
             
-            localStorage.removeItem('posCartExperto');
-            // Volver a la pantalla principal usando la ruta de Flask
-            window.location.href = "{{ url_for('experto') }}";
+                // Limpiar el carrito en localStorage
+                localStorage.removeItem('posCartExperto');
+            
+                // Redirigir a la interfaz correcta según la respuesta del servidor
+                if (data.redirigir && data.url_redireccion) {
+                    console.log(`[COMPRA] Redirigiendo a: ${data.url_redireccion}`);
+                    window.location.href = data.url_redireccion;
+                } else if (data.interfaz) {
+                    console.log(`[COMPRA] Redirigiendo a: /${data.interfaz}`);
+                    window.location.href = `/${data.interfaz}`;
+                } else {
+                    // Fallback: redirigir a la interfaz de experto
+                    window.location.href = '/experto';
+                }
+            })
+            .catch(error => {
+                console.error('[ERROR] Error al finalizar compra:', error);
+                alert('Error al procesar la compra. Por favor intenta de nuevo.');
+            });
         }
 
         function goBack() {

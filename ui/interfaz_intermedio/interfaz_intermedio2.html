@@ -472,36 +472,39 @@
         }
 
         function finalizarCompra() {
-            if (!selectedPaymentMethod) {
-                alert('Por favor selecciona un método de pago');
-                return;
-            }
-            
-            alert('¡Compra finalizada exitosamente!');
-            
-            // Registrar evento de compra exitosa
-            fetch("{{ url_for('evento_api') }}", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    tipo_evento: 'compra_finalizada',
-                    duracion: 0,
-                    exito: true
-                })
-            });
-            
+        if (!selectedPaymentMethod) {
+            alert('Por favor selecciona un método de pago');
+            return;
+        }
+        
+        // Registrar evento de compra exitosa Y ESPERAR LA RESPUESTA
+        fetch("{{ url_for('evento_api') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                tipo_evento: 'compra_finalizada',
+                duracion: 0,
+                exito: true
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('[COMPRA] Respuesta del servidor:', data);
+        
             // Limpiar el carrito en localStorage
             localStorage.removeItem('posCart');
-            
-            // Volver a la pantalla principal usando la ruta de Flask
-            window.location.href = "{{ url_for('intermedio') }}";
-        }
-
-        function goBack() {
-            // Volver a la pantalla principal usando la ruta de Flask
-            window.location.href = "{{ url_for('intermedio') }}";
+        
+            // Redirigir a la interfaz correcta según la respuesta del servidor
+            if (data.redirigir && data.url_redireccion) {
+                console.log(`[COMPRA] Redirigiendo a: ${data.url_redireccion}`);
+                window.location.href = data.url_redireccion;
+            } else if (data.interfaz) {
+                console.log(`[COMPRA] Redirigiendo a: /${data.interfaz}`);
+                window.location.href = `/${data.interfaz}`;
+                }
+            })
         }
 
         // Cargar datos al iniciar

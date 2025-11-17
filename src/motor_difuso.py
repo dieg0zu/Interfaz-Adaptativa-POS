@@ -56,8 +56,9 @@ def crear_motor_difuso():
     # Regla 8: Tiempo medio + errores altos = Novato (promedio pero muchos errores)
     rule8 = ctrl.Rule(tiempo['medio'] & errores['alto'], nivel['novato'])
     
-    # Regla 9: Tiempo bajo + errores bajos + pocas tareas = Intermedio (rápido pero poca experiencia)
-    rule9 = ctrl.Rule(tiempo['bajo'] & errores['bajo'] & tareas['bajo'], nivel['intermedio'])
+    # Regla 9: Tiempo bajo + errores bajos + pocas tareas = Experto (rápido y preciso, incluso con pocas tareas)
+    # Cambiado de Intermedio a Experto para usuarios muy rápidos y precisos
+    rule9 = ctrl.Rule(tiempo['bajo'] & errores['bajo'] & tareas['bajo'], nivel['experto'])
     
     # Regla 10: Tiempo medio + errores bajos + muchas tareas = Intermedio-Experto
     rule10 = ctrl.Rule(tiempo['medio'] & errores['bajo'] & tareas['alto'], nivel['intermedio'])

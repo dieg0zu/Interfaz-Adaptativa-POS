@@ -1,8 +1,3 @@
-/**
- * Sistema de Tracking para POS Adaptativo
- * Registra automáticamente las interacciones del usuario
- */
-
 class POSTracker {
     constructor() {
         this.inicioAccion = null;
@@ -16,6 +11,8 @@ class POSTracker {
         this.tiempoInactividadMax = 30000; // 30 segundos de inactividad = pausa
         this.tiempoActivoTotal = 0; // Tiempo total activo acumulado
         this.tiempoUltimaAccion = null; // Timestamp de la última acción
+        this.tiempoDemoraInicial = 0; // Tiempo de demora desde el primer click hasta la primera acción real
+        this.primeraAccionReal = false; // Si ya se registró la primera acción real
         
         this.inicializar();
     }
@@ -99,14 +96,27 @@ class POSTracker {
             this.ultimoClickTiempo = ahora;
             this.tiempoUltimaAccion = ahora;
             this.tiempoActivoTotal = 0; // Resetear tiempo activo
+            this.tiempoDemoraInicial = 0; // Resetear demora inicial
+            this.primeraAccionReal = false; // Resetear flag
             console.log(`[TRACKER] 🆕 Sesión iniciada - Primer click registrado`);
         } else {
             // Calcular tiempo desde la última acción
             const tiempoDesdeUltimaAccion = ahora - this.tiempoUltimaAccion;
             
+            // Si es la primera acción real después del primer click, capturar el tiempo de demora inicial
+            if (!this.primeraAccionReal && tiempoDesdeUltimaAccion > 0) {
+                // El tiempo desde el primer click hasta ahora es el tiempo de demora inicial
+                this.tiempoDemoraInicial = tiempoDesdeUltimaAccion;
+                this.primeraAccionReal = true;
+                console.log(`[TRACKER] ⏱️ Tiempo de demora inicial capturado: ${(this.tiempoDemoraInicial / 1000).toFixed(1)}s`);
+            }
+            
             if (tiempoDesdeUltimaAccion > this.tiempoInactividadMax) {
-                // Hubo inactividad (más de 30 segundos), no contar ese tiempo
-                console.log(`[TRACKER] ⏸️ Inactividad detectada: ${(tiempoDesdeUltimaAccion / 1000).toFixed(1)}s - No contado`);
+                // Hubo inactividad (más de 30 segundos), pero SIEMPRE contar el tiempo de demora inicial
+                // Solo no contar inactividad entre acciones si ya pasó la primera acción
+                if (this.primeraAccionReal) {
+                    console.log(`[TRACKER] ⏸️ Inactividad detectada: ${(tiempoDesdeUltimaAccion / 1000).toFixed(1)}s - No contado`);
+                }
             } else {
                 // Tiempo activo: agregar al total
                 this.tiempoActivoTotal += tiempoDesdeUltimaAccion;
@@ -123,11 +133,15 @@ class POSTracker {
             // Calcular tiempo activo desde el primer click hasta ahora (sin períodos de inactividad)
             const tiempoActivoSesion = this.tiempoActivoTotal / 1000; // Convertir a segundos
             
-            // Usar el tiempo de procesamiento de la acción, pero también registrar tiempo activo
+            // Incluir el tiempo de demora inicial en el tiempo activo total para el cálculo
+            // Esto asegura que si el usuario se demora mucho al inicio, se refleje en el promedio
+            const tiempoActivoConDemora = tiempoActivoSesion + (this.tiempoDemoraInicial / 1000);
+            
+            // Usar el tiempo de procesamiento de la acción, pero también registrar tiempo activo con demora
             const duracion = Math.max(0.1, duracionProcesamiento);
             
-            this.enviarEvento(accion, duracion, !esError, tiempoActivoSesion);
-            console.log(`[TRACKER] ${accion} - ${duracion.toFixed(2)}s - Tiempo activo: ${tiempoActivoSesion.toFixed(1)}s - ${esError ? 'ERROR' : 'OK'}`);
+            this.enviarEvento(accion, duracion, !esError, tiempoActivoConDemora);
+            console.log(`[TRACKER] ${accion} - ${duracion.toFixed(2)}s - Tiempo activo: ${tiempoActivoSesion.toFixed(1)}s - Demora inicial: ${(this.tiempoDemoraInicial / 1000).toFixed(1)}s - Total: ${tiempoActivoConDemora.toFixed(1)}s - ${esError ? 'ERROR' : 'OK'}`);
         }, 50);
     }
     
@@ -229,31 +243,27 @@ class POSTracker {
                 if (data.nivel !== null && data.nivel !== undefined) {
                     console.log(`[TRACKER] ✅ Venta completada. Nivel: ${data.nivel}, Interfaz: ${data.interfaz}`);
                     
-                    if (data.cambio_interfaz) {
-                        console.log(`[CAMBIO DETECTADO] Cambiando a interfaz: ${data.interfaz}`);
-                        this.mostrarNotificacionCambio(data.interfaz);
+                    // Si se completó una venta, SIEMPRE redirigir a la interfaz correcta
+                    if (tipo === 'compra_finalizada') {
+                        if (data.cambio_interfaz) {
+                            console.log(`[CAMBIO DETECTADO] Cambiando a interfaz: ${data.interfaz}`);
+                            this.mostrarNotificacionCambio(data.interfaz);
+                        } else {
+                            console.log(`[TRACKER] Sin cambio de interfaz. Nivel actual: ${data.nivel}, Interfaz: ${data.interfaz}`);
+                        }
+                        
                         // Resetear tracking para nueva sesión
                         this.resetTracking();
                         
-                        // Redirigir inmediatamente si hay cambio
+                        // Redirigir a la interfaz correcta (siempre después de completar venta)
                         if (data.redirigir && data.url_redireccion) {
                             setTimeout(() => {
                                 window.location.href = data.url_redireccion;
-                            }, 2000);
-                        } else {
+                            }, data.cambio_interfaz ? 2000 : 1000); // Más rápido si no hay cambio
+                        } else if (data.interfaz) {
                             setTimeout(() => {
                                 window.location.href = `/${data.interfaz}`;
-                            }, 2000);
-                        }
-                    } else {
-                        console.log(`[TRACKER] Sin cambio de interfaz. Nivel actual: ${data.nivel}`);
-                        // Resetear tracking para nueva sesión después de completar venta
-                        if (tipo === 'compra_finalizada') {
-                            this.resetTracking();
-                            // Recargar la página para asegurar que se muestre la interfaz correcta
-                            setTimeout(() => {
-                                window.location.reload();
-                            }, 1000);
+                            }, data.cambio_interfaz ? 2000 : 1000);
                         }
                     }
                 } else {

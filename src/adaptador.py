@@ -25,7 +25,7 @@ def evaluar_y_asignar(silencioso=False):
         return "Novato → Interfaz simplificada", 30.0
     
     # Verificar si la fila tiene datos válidos (no solo encabezado)
-    # Leer la ÚLTIMA fila (sesión actual), no la primera
+    # Leer la ÚLTIMA fila (sesión actual), pero si tiene 0 eventos, leer la penúltima (sesión completada)
     try:
         # Obtener la última fila (sesión actual)
         ultima_fila = df.iloc[-1]
@@ -33,12 +33,23 @@ def evaluar_y_asignar(silencioso=False):
         if not sesion_id or sesion_id == '' or sesion_id.lower() == 'nan':
             print("[ADAPTADOR] CSV solo con encabezado → NOVATO (default)")
             return "Novato → Interfaz simplificada", 30.0
+        
+        # Verificar si la última fila tiene eventos
+        errores_ultima = pd.to_numeric(ultima_fila.get('ErroresSesion', 0), errors='coerce') or 0
+        tareas_ultima = pd.to_numeric(ultima_fila.get('TareasCompletadas', 0), errors='coerce') or 0
+        eventos_ultima = int(errores_ultima) + int(tareas_ultima)
+        
+        # Si la última fila tiene 0 eventos y hay más de una fila, leer la penúltima (sesión completada)
+        if eventos_ultima == 0 and len(df) > 1:
+            ultima_fila = df.iloc[-2]  # Leer la penúltima fila (sesión completada)
+            if not silencioso:
+                print(f"[ADAPTADOR] Última fila vacía, leyendo sesión completada (penúltima fila)")
     except (IndexError, KeyError):
         print("[ADAPTADOR] Error al leer fila → NOVATO (default)")
         return "Novato → Interfaz simplificada", 30.0
     
     # ========== LEER MÉTRICAS DIRECTAMENTE ==========
-    # Leer métricas de la última fila (sesión actual)
+    # Leer métricas de la fila seleccionada (última si tiene eventos, penúltima si la última está vacía)
     tiempo_prom = pd.to_numeric(ultima_fila.get('TiempoPromedioAccion(s)', 0), errors='coerce') or 0
     errores = pd.to_numeric(ultima_fila.get('ErroresSesion', 0), errors='coerce') or 0
     tareas = pd.to_numeric(ultima_fila.get('TareasCompletadas', 0), errors='coerce') or 0

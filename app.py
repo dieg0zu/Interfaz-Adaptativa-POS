@@ -16,9 +16,7 @@ def home():
     archivo = "data/dataset_pos.csv"
     
     # Verificar si es la primera vez (sin datos)
-    es_primera_vez = False
     if not os.path.exists(archivo):
-        es_primera_vez = True
         print(f"\n{'='*60}")
         print(f"🆕 PRIMERA VEZ - Mostrando interfaz original")
         print(f"{'='*60}")
@@ -33,62 +31,35 @@ def home():
         print(f"{'='*60}")
         return redirect(url_for("original"))
     
-    # Verificar si hay una fila válida con datos
-    # Leer la ÚLTIMA fila (sesión actual), no la primera
-    try:
-        # Verificar si la última fila tiene valores válidos (sesión actual)
-        ultima_fila = df.iloc[-1]
-        
-        # Verificar si SesionID está vacío o es NaN (indica fila vacía)
-        sesion_id = str(ultima_fila.get('SesionID', '')).strip()
-        if not sesion_id or sesion_id == '' or sesion_id.lower() == 'nan':
-            print(f"\n{'='*60}")
-            print(f"🆕 CSV SOLO CON ENCABEZADO - Mostrando interfaz original")
-            print(f"{'='*60}")
-            return redirect(url_for("original"))
-        
-        errores = pd.to_numeric(ultima_fila.get('ErroresSesion', 0), errors='coerce')
-        tareas = pd.to_numeric(ultima_fila.get('TareasCompletadas', 0), errors='coerce')
-        
-        # Si son NaN, convertirlos a 0
-        if pd.isna(errores):
-            errores = 0
-        if pd.isna(tareas):
-            tareas = 0
-            
-        eventos = int(errores) + int(tareas)
-        
-        # Si no hay eventos registrados, mostrar interfaz original
-        if eventos == 0:
-            print(f"\n{'='*60}")
-            print(f"🆕 SIN EVENTOS - Mostrando interfaz original")
-            print(f"   Errores: {errores}, Tareas: {tareas}")
-            print(f"{'='*60}")
-            return redirect(url_for("original"))
-        
+    # 🔥 CAMBIO AQUÍ: Leer TODAS las filas para encontrar la última con eventos
+    filas_con_eventos = df[(df['ErroresSesion'] > 0) | (df['TareasCompletadas'] > 0)]
+    
+    if filas_con_eventos.empty:
+        # NO hay ninguna sesión con eventos - usuario nuevo
         print(f"\n{'='*60}")
-        print(f"🚀 INICIO DE SESIÓN - {eventos} eventos acumulados")
-        print(f"   Errores: {errores}, Tareas: {tareas}")
-        print(f"{'='*60}")
-    except (IndexError, KeyError, ValueError) as e:
-        # Si hay algún error al leer los datos, mostrar interfaz original
-        print(f"\n{'='*60}")
-        print(f"🆕 ERROR AL LEER DATOS - Mostrando interfaz original")
-        print(f"   Error: {str(e)}")
+        print(f"🆕 SIN EVENTOS - Mostrando interfaz original")
         print(f"{'='*60}")
         return redirect(url_for("original"))
+    
+    # Hay sesiones completadas - evaluar y redirigir a la interfaz correcta
+    print(f"\n{'='*60}")
+    print(f"🚀 HAY DATOS - Evaluando nivel...")
+    print(f"{'='*60}")
     
     interfaz, nivel = evaluar_y_asignar()
     
     # Determinar ruta según nivel
     if nivel < 40:
         interfaz_actual = "novato"
+        print(f"[REDIRIGIENDO] → /novato (nivel: {nivel:.2f})")
         return redirect(url_for("novato"))
     elif 40 <= nivel < 70:
         interfaz_actual = "intermedio"
+        print(f"[REDIRIGIENDO] → /intermedio (nivel: {nivel:.2f})")
         return redirect(url_for("intermedio"))
     else:
         interfaz_actual = "experto"
+        print(f"[REDIRIGIENDO] → /experto (nivel: {nivel:.2f})")
         return redirect(url_for("experto"))
 
 @app.route("/evento", methods=["POST"])
@@ -111,7 +82,7 @@ def evento_api():
         tipo_evento = data.get("tipo_evento", "accion_generica")
         duracion = float(data.get("duracion", 0))
         exito = data.get("exito", True)
-        tiempo_activo = data.get("tiempo_activo", None)  # Tiempo activo de la sesión
+        tiempo_activo = data.get("tiempo_activo", None)
 
         # Registrar el evento
         resultado = registrar_evento(tipo_evento, duracion, exito, tiempo_activo)
@@ -121,7 +92,7 @@ def evento_api():
         
         # SOLO evaluar y clasificar si se completó una venta
         cambio = False
-        nueva_interfaz = interfaz_actual
+        nueva_interfaz = interfaz_actual  # Valor por defecto
         nivel = 0
         
         if es_compra_finalizada:
@@ -130,12 +101,13 @@ def evento_api():
             print(f"   Sesión completada: {sesion_id}")
             print(f"{'='*60}")
             
+            # 🔥 GUARDAR INTERFAZ ANTERIOR ANTES DE EVALUAR
+            interfaz_anterior = interfaz_actual
+            
             # Evaluar y clasificar usando lógica difusa
-            # evaluar_y_asignar leerá la última fila que ahora es la sesión completada
-            # (antes de que se agregue la nueva sesión vacía)
             interfaz, nivel = evaluar_y_asignar()
             
-            # Determinar nueva interfaz basada en el nivel
+            # 🔥 DETERMINAR NUEVA INTERFAZ BASADA EN EL NIVEL (SIN USAR interfaz_actual)
             if nivel < 40:
                 nueva_interfaz = "novato"
             elif 40 <= nivel < 70:
@@ -143,50 +115,21 @@ def evento_api():
             else:
                 nueva_interfaz = "experto"
             
-            # IMPORTANTE: Actualizar interfaz_actual ANTES de verificar el cambio
-            # para que la comparación sea correcta
-            interfaz_anterior = interfaz_actual
+            # 🔥 ACTUALIZAR interfaz_actual INMEDIATAMENTE
+            interfaz_actual = nueva_interfaz
             
-            # Verificar si hubo cambio de interfaz
+            # Verificar si hubo cambio
             cambio = nueva_interfaz != interfaz_anterior
+            
             if cambio:
-                print(f"\n🔄 [CAMBIO DE INTERFAZ] {interfaz_anterior.upper()} → {nueva_interfaz.upper()}")
+                print(f"\n🔄 [CAMBIO DE INTERFAZ]")
+                print(f"   {interfaz_anterior.upper()} → {nueva_interfaz.upper()}")
                 print(f"   Nivel: {nivel:.2f}")
-                print(f"   Sesión completada: {sesion_id}")
-                print(f"{'='*60}\n")
-                interfaz_actual = nueva_interfaz  # Actualizar la variable global
             else:
-                print(f"   Nivel actual: {nivel:.2f} → Interfaz: {nueva_interfaz.upper()} (sin cambios)")
-                print(f"   Sesión completada: {sesion_id}")
-                print(f"{'='*60}\n")
-                interfaz_actual = nueva_interfaz  # Actualizar aunque no haya cambio (para mantener consistencia)
-            
-            # AHORA crear la nueva sesión vacía para la próxima venta
-            # IMPORTANTE: Agregar como NUEVA FILA, no sobrescribir
-            from src.logger import generar_nueva_sesion_id
-            import pandas as pd
-            
-            nueva_sesion_id = generar_nueva_sesion_id()
-            df = pd.read_csv("data/dataset_pos.csv")
-            
-            # Agregar nueva fila al final (nueva sesión vacía)
-            nueva_fila = pd.DataFrame([{
-                'SesionID': nueva_sesion_id,
-                'TiempoPromedioAccion(s)': 0,
-                'ErroresSesion': 0,
-                'TareasCompletadas': 0,
-                'NivelClasificado': nueva_interfaz.capitalize()  # Usar el nivel recién calculado
-            }])
-            
-            # Concatenar al final (agregar nueva fila)
-            df = pd.concat([df, nueva_fila], ignore_index=True)
-            df.to_csv("data/dataset_pos.csv", index=False)
-            
-            print(f"[LOGGER] 🆕 Nueva sesión iniciada: {nueva_sesion_id}")
-            print(f"[LOGGER] 📊 Total de sesiones en CSV: {len(df)}")
-        else:
-            # Para eventos normales, solo registrar sin evaluar
-            print(f"[EVENTO] {tipo_evento} registrado (sin evaluación - esperando finalizar venta)")
+                print(f"   ℹ️  Interfaz: {nueva_interfaz.upper()}")
+                print(f"   Nivel: {nivel:.2f}")
+
+            print(f"{'='*60}\n")
         
         respuesta = {
             "status": "ok",
@@ -194,13 +137,14 @@ def evento_api():
             "interfaz": nueva_interfaz,
             "cambio_interfaz": cambio,
             "sesion_id": sesion_id,
-            "mensaje": f"Evento registrado. {'Evaluación completada.' if es_compra_finalizada else 'Esperando finalizar venta para evaluar.'}"
+            "mensaje": f"Evento registrado. {'Evaluación completada.' if es_compra_finalizada else 'Esperando finalizar venta.'}"
         }
         
-        # Si hay cambio de interfaz, forzar redirección inmediata
-        if cambio and es_compra_finalizada:
+        # 🔥 SIEMPRE redirigir cuando se completa una venta
+        if es_compra_finalizada:
             respuesta["redirigir"] = True
             respuesta["url_redireccion"] = f"/{nueva_interfaz}"
+            print(f"[REDIRECCIÓN] → /{nueva_interfaz}")
         
         return jsonify(respuesta)
         
@@ -308,19 +252,19 @@ def obtener_estado():
 @app.route("/novato")
 def novato():
     global interfaz_actual
-    interfaz_actual = "novato"  # Sincronizar con la ruta actual
+    interfaz_actual = "novato"
     return render_template("interfaz_novato/interfaz_novato.html", nivel_actual="novato")
 
 @app.route("/intermedio")
 def intermedio():
     global interfaz_actual
-    interfaz_actual = "intermedio"  # Sincronizar con la ruta actual
+    interfaz_actual = "intermedio"
     return render_template("interfaz_intermedio/interfaz_intermedio.html", nivel_actual="intermedio")
 
 @app.route("/experto")
 def experto():
     global interfaz_actual
-    interfaz_actual = "experto"  # Sincronizar con la ruta actual
+    interfaz_actual = "experto"
     return render_template("interfaz_experto/interfaz_experto.html", nivel_actual="experto")
 
 # Rutas para pantallas de pago

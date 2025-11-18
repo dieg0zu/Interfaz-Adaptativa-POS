@@ -1,0 +1,139 @@
+{
+  "timestamp": "2025-11-17T13:12:20.297891",
+  "configuracion": {
+    "base_url": "http://localhost:5000",
+    "num_sesiones": 5
+  },
+  "estadisticas": {
+    "total_cambios": 4,
+    "total_sesiones": 5,
+    "porcentaje_cambios": 80.0,
+    "tiempo_promedio_ms": 2059.922933578491,
+    "tiempo_mediana_ms": 2060.2171421051025,
+    "tiempo_minimo_ms": 2039.717674255371,
+    "tiempo_maximo_ms": 2079.5397758483887,
+    "desviacion_estandar_ms": 16.33660140578649
+  },
+  "tiempos_cambio": [
+    2079.5397758483887,
+    2058.2926273345947,
+    2039.717674255371,
+    2062.1416568756104
+  ],
+  "cambios_detectados": [
+    {
+      "sesion": 1,
+      "perfil": "novato",
+      "tiempo_cambio_ms": 2079.5397758483887,
+      "interfaz_inicial": "original",
+      "interfaz_final": "original",
+      "nivel": 50.0
+    },
+    {
+      "sesion": 2,
+      "perfil": "intermedio",
+      "tiempo_cambio_ms": 2058.2926273345947,
+      "interfaz_inicial": "original",
+      "interfaz_final": "original",
+      "nivel": 82.82
+    },
+    {
+      "sesion": 4,
+      "perfil": "novato",
+      "tiempo_cambio_ms": 2039.717674255371,
+      "interfaz_inicial": "original",
+      "interfaz_final": "original",
+      "nivel": 50.0
+    },
+    {
+      "sesion": 5,
+      "perfil": "intermedio",
+      "tiempo_cambio_ms": 2062.1416568756104,
+      "interfaz_inicial": "original",
+      "interfaz_final": "original",
+      "nivel": 82.82
+    }
+  ],
+  "resultados_detallados": [
+    {
+      "sesion": 1,
+      "perfil": "novato",
+      "timestamp": "2025-11-17T13:10:41.050798",
+      "resultado": {
+        "exito": true,
+        "tiempo_cambio_ms": 2079.5397758483887,
+        "interfaz_inicial": "original",
+        "interfaz_final": "original",
+        "interfaz_asignada": "intermedio",
+        "hubo_cambio": true,
+        "nivel": 50.0,
+        "cambio_detectado": true,
+        "tamaño_respuesta": 29806
+      }
+    },
+    {
+      "sesion": 2,
+      "perfil": "intermedio",
+      "timestamp": "2025-11-17T13:11:05.131383",
+      "resultado": {
+        "exito": true,
+        "tiempo_cambio_ms": 2058.2926273345947,
+        "interfaz_inicial": "original",
+        "interfaz_final": "original",
+        "interfaz_asignada": "experto",
+        "hubo_cambio": true,
+        "nivel": 82.82,
+        "cambio_detectado": true,
+        "tamaño_respuesta": 28257
+      }
+    },
+    {
+      "sesion": 3,
+      "perfil": "experto",
+      "timestamp": "2025-11-17T13:11:33.527336",
+      "resultado": {
+        "exito": true,
+        "tiempo_cambio_ms": 2041.3875579833984,
+        "interfaz_inicial": "original",
+        "interfaz_final": "original",
+        "interfaz_asignada": "experto",
+        "hubo_cambio": false,
+        "nivel": 81.39,
+        "cambio_detectado": false,
+        "tamaño_respuesta": 28257
+      }
+    },
+    {
+      "sesion": 4,
+      "perfil": "novato",
+      "timestamp": "2025-11-17T13:11:55.565600",
+      "resultado": {
+        "exito": true,
+        "tiempo_cambio_ms": 2039.717674255371,
+        "interfaz_inicial": "original",
+        "interfaz_final": "original",
+        "interfaz_asignada": "intermedio",
+        "hubo_cambio": true,
+        "nivel": 50.0,
+        "cambio_detectado": true,
+        "tamaño_respuesta": 29806
+      }
+    },
+    {
+      "sesion": 5,
+      "perfil": "intermedio",
+      "timestamp": "2025-11-17T13:12:19.772809",
+      "resultado": {
+        "exito": true,
+        "tiempo_cambio_ms": 2062.1416568756104,
+        "interfaz_inicial": "original",
+        "interfaz_final": "original",
+        "interfaz_asignada": "experto",
+        "hubo_cambio": true,
+        "nivel": 82.82,
+        "cambio_detectado": true,
+        "tamaño_respuesta": 28257
+      }
+    }
+  ]
+}

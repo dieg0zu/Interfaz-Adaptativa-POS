@@ -1,0 +1,156 @@
+{
+  "timestamp": "2025-11-17T14:18:19.218327",
+  "tipo_test": "clasificacion_difusa",
+  "estadisticas": {
+    "total_pruebas": 10,
+    "pruebas_exitosas": 8,
+    "pruebas_fallidas": 2,
+    "porcentaje_exito": 80.0
+  },
+  "resultados_detallados": [
+    {
+      "descripcion": "Usuario lento con muchos errores - NOVATO",
+      "input": {
+        "tiempo": 8.0,
+        "errores": 7,
+        "tareas": 5
+      },
+      "resultado": {
+        "nivel_calculado": 14.0,
+        "interfaz_asignada": "Novato → Interfaz simplificada",
+        "nivel_esperado": "novato",
+        "nivel_obtenido": "novato",
+        "es_correcto": true
+      },
+      "timestamp": "2025-11-17T14:18:18.653180"
+    },
+    {
+      "descripcion": "Usuario promedio - INTERMEDIO",
+      "input": {
+        "tiempo": 5.0,
+        "errores": 3,
+        "tareas": 10
+      },
+      "resultado": {
+        "nivel_calculado": 49.99999999999999,
+        "interfaz_asignada": "Intermedio → Interfaz equilibrada",
+        "nivel_esperado": "intermedio",
+        "nivel_obtenido": "intermedio",
+        "es_correcto": true
+      },
+      "timestamp": "2025-11-17T14:18:18.721265"
+    },
+    {
+      "descripcion": "Usuario rápido, sin errores, muchas tareas - EXPERTO",
+      "input": {
+        "tiempo": 2.0,
+        "errores": 0,
+        "tareas": 25
+      },
+      "resultado": {
+        "nivel_calculado": 83.11111111111109,
+        "interfaz_asignada": "Experto → Interfaz avanzada",
+        "nivel_esperado": "experto",
+        "nivel_obtenido": "experto",
+        "es_correcto": true
+      },
+      "timestamp": "2025-11-17T14:18:18.820972"
+    },
+    {
+      "descripcion": "Usuario medio-lento, pocos errores - INTERMEDIO",
+      "input": {
+        "tiempo": 6.0,
+        "errores": 2,
+        "tareas": 15
+      },
+      "resultado": {
+        "nivel_calculado": 50.0,
+        "interfaz_asignada": "Intermedio → Interfaz equilibrada",
+        "nivel_esperado": "intermedio",
+        "nivel_obtenido": "intermedio",
+        "es_correcto": true
+      },
+      "timestamp": "2025-11-17T14:18:18.930726"
+    },
+    {
+      "descripcion": "Usuario lento pero preciso - NOVATO",
+      "input": {
+        "tiempo": 9.0,
+        "errores": 1,
+        "tareas": 8
+      },
+      "resultado": {
+        "nivel_calculado": 14.0,
+        "interfaz_asignada": "Novato → Interfaz simplificada",
+        "nivel_esperado": "novato",
+        "nivel_obtenido": "novato",
+        "es_correcto": true
+      },
+      "timestamp": "2025-11-17T14:18:18.983101"
+    },
+    {
+      "descripcion": "Usuario rápido pero con errores - INTERMEDIO",
+      "input": {
+        "tiempo": 3.0,
+        "errores": 4,
+        "tareas": 12
+      },
+      "resultado": {
+        "nivel_calculado": 49.99999999999999,
+        "interfaz_asignada": "Intermedio → Interfaz equilibrada",
+        "nivel_esperado": "intermedio",
+        "nivel_obtenido": "intermedio",
+        "es_correcto": true
+      },
+      "timestamp": "2025-11-17T14:18:19.039911"
+    },
+    {
+      "descripcion": "Usuario medio, sin errores - INTERMEDIO",
+      "input": {
+        "tiempo": 4.0,
+        "errores": 0,
+        "tareas": 18
+      },
+      "resultado": {
+        "nivel_calculado": 49.99999999999997,
+        "interfaz_asignada": "Intermedio → Interfaz equilibrada",
+        "nivel_esperado": "intermedio",
+        "nivel_obtenido": "intermedio",
+        "es_correcto": true
+      },
+      "timestamp": "2025-11-17T14:18:19.101325"
+    },
+    {
+      "descripcion": "Usuario lento con errores - NOVATO",
+      "input": {
+        "tiempo": 7.0,
+        "errores": 5,
+        "tareas": 6
+      },
+      "resultado": {
+        "nivel_calculado": 17.61904761904762,
+        "interfaz_asignada": "Novato → Interfaz simplificada",
+        "nivel_esperado": "novato",
+        "nivel_obtenido": "novato",
+        "es_correcto": true
+      },
+      "timestamp": "2025-11-17T14:18:19.158445"
+    },
+    {
+      "descripcion": "Usuario rápido, pocos errores, muchas tareas - EXPERTO",
+      "input": {
+        "tiempo": 2.5,
+        "errores": 2,
+        "tareas": 22
+      },
+      "resultado": {
+        "nivel_calculado": 49.999999999999986,
+        "interfaz_asignada": "Intermedio → Interfaz equilibrada",
+        "nivel_esperado": "experto",
+        "nivel_obtenido": "intermedio",
+        "es_correcto": false
+      },
+      "timestamp": "2025-11-17T14:18:19.216168"
+    }
+  ]
+}

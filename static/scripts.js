@@ -259,7 +259,7 @@ class POSTracker {
                         if (data.redirigir && data.url_redireccion) {
                             setTimeout(() => {
                                 window.location.href = data.url_redireccion;
-                            }, data.cambio_interfaz ? 2000 : 1000); // Más rápido si no hay cambio
+                            }, data.cambio_interfaz ? 600 : 300); // Más rápido si no hay cambio
                         } else if (data.interfaz) {
                             setTimeout(() => {
                                 window.location.href = `/${data.interfaz}`;

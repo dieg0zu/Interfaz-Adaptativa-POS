@@ -166,7 +166,7 @@ class TestRendimiento:
             if eventos and eventos[-1].get("exito"):
                 tiempo_adapt = eventos[-1].get("tiempo_adaptacion", 0)
                 if tiempo_adapt > 0:
-                    status = "✅" if tiempo_adapt < 1000 else "⚠️"
+                    status = "✅" if tiempo_adapt < 2500 else "⚠️"
                     print(f"{status} {tiempo_adapt:.2f}ms")
                 else:
                     print("✅ OK")

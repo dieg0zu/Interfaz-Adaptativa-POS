@@ -1,0 +1,184 @@
+{
+  "timestamp": "2025-11-17T12:10:06.477449",
+  "configuracion": {
+    "base_url": "http://localhost:5000",
+    "num_sesiones": 5
+  },
+  "estadisticas": {
+    "total_cambios": 4,
+    "total_sesiones": 5,
+    "porcentaje_cambios": 80.0,
+    "tiempo_promedio_ms": 2212.0071053504944,
+    "tiempo_mediana_ms": 2188.248038291931,
+    "tiempo_minimo_ms": 2173.858165740967,
+    "tiempo_maximo_ms": 2297.6741790771484,
+    "desviacion_estandar_ms": 57.97927106055654
+  },
+  "tiempos_cambio": [
+    2297.6741790771484,
+    2197.237253189087,
+    2173.858165740967,
+    2179.2588233947754
+  ],
+  "cambios_detectados": [
+    {
+      "sesion": 1,
+      "perfil": "novato",
+      "tiempo_cambio_ms": 2297.6741790771484,
+      "interfaz_inicial": "original",
+      "interfaz_final": "original",
+      "nivel": 50.0
+    },
+    {
+      "sesion": 2,
+      "perfil": "intermedio",
+      "tiempo_cambio_ms": 2197.237253189087,
+      "interfaz_inicial": "original",
+      "interfaz_final": "original",
+      "nivel": 82.82
+    },
+    {
+      "sesion": 4,
+      "perfil": "novato",
+      "tiempo_cambio_ms": 2173.858165740967,
+      "interfaz_inicial": "original",
+      "interfaz_final": "original",
+      "nivel": 50.0
+    },
+    {
+      "sesion": 5,
+      "perfil": "intermedio",
+      "tiempo_cambio_ms": 2179.2588233947754,
+      "interfaz_inicial": "original",
+      "interfaz_final": "original",
+      "nivel": 82.82
+    }
+  ],
+  "resultados_detallados": [
+    {
+      "sesion": 1,
+      "perfil": "novato",
+      "timestamp": "2025-11-17T12:08:35.924417",
+      "resultado": {
+        "exito": true,
+        "tiempo_cambio_ms": 2297.6741790771484,
+        "interfaz_inicial": "original",
+        "interfaz_final": "original",
+        "interfaz_asignada": "intermedio",
+        "hubo_cambio": true,
+        "nivel": 50.0,
+        "cambio_detectado": true,
+        "respuesta_completa": {
+          "cambio_interfaz": true,
+          "interfaz": "intermedio",
+          "mensaje": "Evento registrado. Evaluación completada.",
+          "nivel": 50.0,
+          "redirigir": true,
+          "sesion_id": "S_20251117_120822",
+          "status": "ok",
+          "url_redireccion": "/intermedio"
+        }
+      }
+    },
+    {
+      "sesion": 2,
+      "perfil": "intermedio",
+      "timestamp": "2025-11-17T12:08:57.968090",
+      "resultado": {
+        "exito": true,
+        "tiempo_cambio_ms": 2197.237253189087,
+        "interfaz_inicial": "original",
+        "interfaz_final": "original",
+        "interfaz_asignada": "experto",
+        "hubo_cambio": true,
+        "nivel": 82.82,
+        "cambio_detectado": true,
+        "respuesta_completa": {
+          "cambio_interfaz": true,
+          "interfaz": "experto",
+          "mensaje": "Evento registrado. Evaluación completada.",
+          "nivel": 82.82,
+          "redirigir": true,
+          "sesion_id": "S_20251117_120833",
+          "status": "ok",
+          "url_redireccion": "/experto"
+        }
+      }
+    },
+    {
+      "sesion": 3,
+      "perfil": "experto",
+      "timestamp": "2025-11-17T12:09:24.203152",
+      "resultado": {
+        "exito": true,
+        "tiempo_cambio_ms": 2171.398878097534,
+        "interfaz_inicial": "original",
+        "interfaz_final": "original",
+        "interfaz_asignada": "experto",
+        "hubo_cambio": false,
+        "nivel": 81.39,
+        "cambio_detectado": false,
+        "respuesta_completa": {
+          "cambio_interfaz": false,
+          "interfaz": "experto",
+          "mensaje": "Evento registrado. Evaluación completada.",
+          "nivel": 81.39,
+          "redirigir": true,
+          "sesion_id": "S_20251117_120855",
+          "status": "ok",
+          "url_redireccion": "/experto"
+        }
+      }
+    },
+    {
+      "sesion": 4,
+      "perfil": "novato",
+      "timestamp": "2025-11-17T12:09:43.990216",
+      "resultado": {
+        "exito": true,
+        "tiempo_cambio_ms": 2173.858165740967,
+        "interfaz_inicial": "original",
+        "interfaz_final": "original",
+        "interfaz_asignada": "intermedio",
+        "hubo_cambio": true,
+        "nivel": 50.0,
+        "cambio_detectado": true,
+        "respuesta_completa": {
+          "cambio_interfaz": true,
+          "interfaz": "intermedio",
+          "mensaje": "Evento registrado. Evaluación completada.",
+          "nivel": 50.0,
+          "redirigir": true,
+          "sesion_id": "S_20251117_120921",
+          "status": "ok",
+          "url_redireccion": "/intermedio"
+        }
+      }
+    },
+    {
+      "sesion": 5,
+      "perfil": "intermedio",
+      "timestamp": "2025-11-17T12:10:05.965965",
+      "resultado": {
+        "exito": true,
+        "tiempo_cambio_ms": 2179.2588233947754,
+        "interfaz_inicial": "original",
+        "interfaz_final": "original",
+        "interfaz_asignada": "experto",
+        "hubo_cambio": true,
+        "nivel": 82.82,
+        "cambio_detectado": true,
+        "respuesta_completa": {
+          "cambio_interfaz": true,
+          "interfaz": "experto",
+          "mensaje": "Evento registrado. Evaluación completada.",
+          "nivel": 82.82,
+          "redirigir": true,
+          "sesion_id": "S_20251117_120941",
+          "status": "ok",
+          "url_redireccion": "/experto"
+        }
+      }
+    }
+  ]
+}

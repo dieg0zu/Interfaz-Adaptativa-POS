@@ -24,17 +24,28 @@
 
         /* Sidebar */
         .sidebar {
-            width: 240px;
-            background: white;
-            box-shadow: 2px 0 8px rgba(0,0,0,0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #9ca3af;
+            width: 250px;
+            background-color: white;
+            border-right: 1px solid #e0e0e0;
+            overflow-y: auto;
         }
 
-        .sidebar-content {
-            text-align: center;
+        .sidebar-item {
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .sidebar-item.active {
+            background-color: #e8f5e9;
+            border-left-color: #4CAF50;
+            color: #2e7d32;
+            font-weight: 500;
         }
 
         /* Main content */
@@ -580,10 +591,21 @@
     <div class="container">
         <!-- Sidebar -->
         <div class="sidebar">
-            <div class="sidebar-content">
-                <p style="font-size: 14px;">Menú lateral</p>
-                <p style="font-size: 12px;">(imagen estática)</p>
+            <div class="sidebar-item active">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span>📍</span>
+                    <span>Punto de venta</span>
+                </div>
             </div>
+            <div class="sidebar-item" style="padding-left: 50px;">Caja</div>
+            <div class="sidebar-item" style="padding-left: 50px;">Cuentas guardadas</div>
+            <div class="sidebar-item" style="padding-left: 50px;">Historial de ventas</div>
+            <div class="sidebar-item" style="padding-left: 50px;">Movimientos de caja</div>
+            <div class="sidebar-item" style="padding-left: 50px;">Apertura y cierre de caja</div>
+            <div class="sidebar-item" style="padding-left: 50px;">Reporte cierre/turno</div>
+            <div class="sidebar-item" style="padding-left: 50px;">Estadísticas de venta</div>
+            <div class="sidebar-item" style="padding-left: 50px;">Academia Wally</div>
+            <div class="sidebar-item" style="padding-left: 50px;">Impresoras</div>
         </div>
 
         <!-- Main Screen -->

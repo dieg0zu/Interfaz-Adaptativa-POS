@@ -2,6 +2,7 @@ import csv
 from datetime import datetime
 import os
 import pandas as pd
+from src.config import obtener_estado_adaptacion
 
 def generar_nueva_sesion_id():
     """Genera un nuevo ID de sesión basado en timestamp"""
@@ -98,6 +99,13 @@ def registrar_evento(tipo_evento, duracion, exito=True, tiempo_activo=None):
     if es_compra_finalizada:
         # Guardar los datos de la sesión completada
         nivel_actual = str(ultima_fila.get('NivelClasificado', 'Novato')) if len(df) > 0 else 'Novato'
+        
+        # 🔥 Si la adaptación está desactivada, no actualizar el nivel en la sesión completada
+        adaptacion_activa = obtener_estado_adaptacion()
+        if not adaptacion_activa:
+            # Mantener el nivel que ya tenía (no modificarlo)
+            nivel_actual = str(ultima_fila.get('NivelClasificado', '')) if len(df) > 0 else ''
+        
         datos_sesion_completada = {
             'SesionID': sesion_actual,
             'TiempoPromedioAccion(s)': round(tiempo_nuevo, 2),
@@ -124,12 +132,20 @@ def registrar_evento(tipo_evento, duracion, exito=True, tiempo_activo=None):
     
         # AHORA SÍ CREAR NUEVA SESIÓN (nueva fila)
         nueva_sesion_id = generar_nueva_sesion_id()
+        
+        # 🔥 Si la adaptación está desactivada, no usar el nivel anterior
+        adaptacion_activa = obtener_estado_adaptacion()
+        if adaptacion_activa:
+            nivel_nueva_sesion = nivel_actual  # Usar el nivel de la sesión anterior solo si adaptación está activa
+        else:
+            nivel_nueva_sesion = ""  # Vacío si adaptación está desactivada
+        
         nueva_fila = pd.DataFrame([{
             'SesionID': nueva_sesion_id,
             'TiempoPromedioAccion(s)': 0,
             'ErroresSesion': 0,
             'TareasCompletadas': 0,
-            'NivelClasificado': nivel_actual  # Usar el nivel de la sesión anterior
+            'NivelClasificado': nivel_nueva_sesion
         }])
     
         # AGREGAR como nueva fila

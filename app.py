@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from src.adaptador import evaluar_y_asignar
 from src.logger import registrar_evento
+from src.config import obtener_estado_adaptacion, establecer_estado_adaptacion
 import os
 import pandas as pd
 
@@ -12,6 +13,16 @@ interfaz_actual = "novato"
 def home():
     """Página inicial - detecta nivel y redirige"""
     global interfaz_actual
+    
+    # 🔥 VERIFICAR ESTADO DE ADAPTACIÓN
+    adaptacion_activa = obtener_estado_adaptacion()
+    
+    if not adaptacion_activa:
+        print(f"\n{'='*60}")
+        print(f"🔒 ADAPTACIÓN DESACTIVADA - Mostrando interfaz original")
+        print(f"{'='*60}")
+        interfaz_actual = "original"
+        return redirect(url_for("original"))
     
     archivo = "data/dataset_pos.csv"
     
@@ -90,54 +101,67 @@ def evento_api():
         sesion_id = resultado[1]
         datos_sesion_completada = resultado[2] if len(resultado) > 2 else None
         
-        # SOLO evaluar y clasificar si se completó una venta
+        # 🔥 VERIFICAR ESTADO DE ADAPTACIÓN
+        adaptacion_activa = obtener_estado_adaptacion()
+        
+        # SOLO evaluar y clasificar si se completó una venta Y la adaptación está activa
         cambio = False
         nueva_interfaz = interfaz_actual  # Valor por defecto
         nivel = 0
         
         if es_compra_finalizada:
-            print(f"\n{'='*60}")
-            print(f"💰 VENTA COMPLETADA - Evaluando clasificación...")
-            print(f"   Sesión completada: {sesion_id}")
-            print(f"{'='*60}")
-            
-            # 🔥 GUARDAR INTERFAZ ANTERIOR ANTES DE EVALUAR
-            interfaz_anterior = interfaz_actual
-            
-            # Evaluar y clasificar usando lógica difusa
-            interfaz, nivel = evaluar_y_asignar()
-            
-            # 🔥 DETERMINAR NUEVA INTERFAZ BASADA EN EL NIVEL (SIN USAR interfaz_actual)
-            if nivel < 40:
-                nueva_interfaz = "novato"
-            elif 40 <= nivel < 70:
-                nueva_interfaz = "intermedio"
-            else:
-                nueva_interfaz = "experto"
-            
-            # 🔥 ACTUALIZAR interfaz_actual INMEDIATAMENTE
-            interfaz_actual = nueva_interfaz
-            
-            # Verificar si hubo cambio
-            cambio = nueva_interfaz != interfaz_anterior
-            
-            if cambio:
-                print(f"\n🔄 [CAMBIO DE INTERFAZ]")
-                print(f"   {interfaz_anterior.upper()} → {nueva_interfaz.upper()}")
-                print(f"   Nivel: {nivel:.2f}")
-            else:
-                print(f"   ℹ️  Interfaz: {nueva_interfaz.upper()}")
-                print(f"   Nivel: {nivel:.2f}")
+            if adaptacion_activa:
+                print(f"\n{'='*60}")
+                print(f"💰 VENTA COMPLETADA - Evaluando clasificación...")
+                print(f"   Sesión completada: {sesion_id}")
+                print(f"{'='*60}")
+                
+                # 🔥 GUARDAR INTERFAZ ANTERIOR ANTES DE EVALUAR
+                interfaz_anterior = interfaz_actual
+                
+                # Evaluar y clasificar usando lógica difusa
+                interfaz, nivel = evaluar_y_asignar()
+                
+                # 🔥 DETERMINAR NUEVA INTERFAZ BASADA EN EL NIVEL (SIN USAR interfaz_actual)
+                if nivel < 40:
+                    nueva_interfaz = "novato"
+                elif 40 <= nivel < 70:
+                    nueva_interfaz = "intermedio"
+                else:
+                    nueva_interfaz = "experto"
+                
+                # 🔥 ACTUALIZAR interfaz_actual INMEDIATAMENTE
+                interfaz_actual = nueva_interfaz
+                
+                # Verificar si hubo cambio
+                cambio = nueva_interfaz != interfaz_anterior
+                
+                if cambio:
+                    print(f"\n🔄 [CAMBIO DE INTERFAZ]")
+                    print(f"   {interfaz_anterior.upper()} → {nueva_interfaz.upper()}")
+                    print(f"   Nivel: {nivel:.2f}")
+                else:
+                    print(f"   ℹ️  Interfaz: {nueva_interfaz.upper()}")
+                    print(f"   Nivel: {nivel:.2f}")
 
-            print(f"{'='*60}\n")
+                print(f"{'='*60}\n")
+            else:
+                # Adaptación desactivada - siempre redirigir a original
+                print(f"\n{'='*60}")
+                print(f"💰 VENTA COMPLETADA - Adaptación desactivada")
+                print(f"   Redirigiendo a interfaz original")
+                print(f"{'='*60}\n")
+                nueva_interfaz = "original"
+                interfaz_actual = "original"
         
         respuesta = {
             "status": "ok",
-            "nivel": round(nivel, 2) if es_compra_finalizada else None,
+            "nivel": round(nivel, 2) if (es_compra_finalizada and adaptacion_activa) else None,
             "interfaz": nueva_interfaz,
             "cambio_interfaz": cambio,
             "sesion_id": sesion_id,
-            "mensaje": f"Evento registrado. {'Evaluación completada.' if es_compra_finalizada else 'Esperando finalizar venta.'}"
+            "adaptacion_activa": adaptacion_activa,
+            "mensaje": f"Evento registrado. {'Evaluación completada.' if (es_compra_finalizada and adaptacion_activa) else 'Esperando finalizar venta.' if not es_compra_finalizada else 'Adaptación desactivada - interfaz original.'}"
         }
         
         # 🔥 SIEMPRE redirigir cuando se completa una venta
@@ -155,6 +179,51 @@ def evento_api():
         return jsonify({
             "status": "error",
             "mensaje": f"Error al procesar evento: {str(e)}"
+        }), 500
+
+@app.route("/api/toggle-adaptacion", methods=["POST"])
+def toggle_adaptacion():
+    """Activa o desactiva la adaptación del sistema"""
+    try:
+        data = request.json
+        activar = data.get("activar", True)
+        
+        estado_anterior = obtener_estado_adaptacion()
+        nuevo_estado = establecer_estado_adaptacion(activar)
+        
+        mensaje = "Adaptación activada" if nuevo_estado else "Adaptación desactivada"
+        
+        print(f"\n{'='*60}")
+        print(f"🔧 TOGGLE ADAPTACIÓN: {estado_anterior} → {nuevo_estado}")
+        print(f"   {mensaje}")
+        print(f"{'='*60}\n")
+        
+        return jsonify({
+            "status": "ok",
+            "adaptacion_activa": nuevo_estado,
+            "mensaje": mensaje
+        })
+    except Exception as e:
+        print(f"❌ Error en toggle_adaptacion: {e}")
+        return jsonify({
+            "status": "error",
+            "mensaje": f"Error al cambiar estado: {str(e)}"
+        }), 500
+
+@app.route("/api/estado-adaptacion", methods=["GET"])
+def api_obtener_estado_adaptacion():
+    """Obtiene el estado actual de la adaptación"""
+    try:
+        estado = obtener_estado_adaptacion()
+        return jsonify({
+            "status": "ok",
+            "adaptacion_activa": estado
+        })
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "adaptacion_activa": True,  # Por defecto activa
+            "mensaje": str(e)
         }), 500
 
 @app.route("/api/estado", methods=["GET"])
@@ -227,13 +296,16 @@ def obtener_estado():
             except:
                 interfaz_actual = nivel_texto.lower() if nivel_texto else "novato"
         
+        adaptacion_activa = obtener_estado_adaptacion()
+        
         return jsonify({
             "eventos": eventos_totales,
             "tiempo_promedio": float(tiempo_prom),
             "errores": int(errores),
             "tareas": int(tareas),
             "nivel": nivel_texto,
-            "interfaz": interfaz_actual
+            "interfaz": interfaz_actual,
+            "adaptacion_activa": adaptacion_activa
         })
         
     except Exception as e:
@@ -252,18 +324,27 @@ def obtener_estado():
 @app.route("/novato")
 def novato():
     global interfaz_actual
+    # Verificar si la adaptación está activa
+    if not obtener_estado_adaptacion():
+        return redirect(url_for("original"))
     interfaz_actual = "novato"
     return render_template("interfaz_novato/interfaz_novato.html", nivel_actual="novato")
 
 @app.route("/intermedio")
 def intermedio():
     global interfaz_actual
+    # Verificar si la adaptación está activa
+    if not obtener_estado_adaptacion():
+        return redirect(url_for("original"))
     interfaz_actual = "intermedio"
     return render_template("interfaz_intermedio/interfaz_intermedio.html", nivel_actual="intermedio")
 
 @app.route("/experto")
 def experto():
     global interfaz_actual
+    # Verificar si la adaptación está activa
+    if not obtener_estado_adaptacion():
+        return redirect(url_for("original"))
     interfaz_actual = "experto"
     return render_template("interfaz_experto/interfaz_experto.html", nivel_actual="experto")
 

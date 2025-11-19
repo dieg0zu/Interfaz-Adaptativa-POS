@@ -65,6 +65,12 @@
             gap: 8px;
         }
 
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
         .logo {
             width: 32px;
             height: 32px;
@@ -74,6 +80,36 @@
 
         .company-info {
             text-align: right;
+        }
+
+        .btn-adaptacion {
+            padding: 8px 16px;
+            border: 2px solid #4CAF50;
+            border-radius: 6px;
+            background: white;
+            color: #4CAF50;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-adaptacion:hover {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-adaptacion.desactivada {
+            border-color: #f44336;
+            color: #f44336;
+        }
+
+        .btn-adaptacion.desactivada:hover {
+            background: #f44336;
+            color: white;
         }
 
         .company-name {
@@ -559,9 +595,15 @@
                         <span style="font-weight: 600;">Wally</span>
                         <span style="font-size: 14px; color: #6b7280;">Plan Crece</span>
                     </div>
-                    <div class="company-info">
-                        <div class="company-name">J & Y NEGOCIOS S.A.C.</div>
-                        <div class="company-id">20608507371</div>
+                    <div class="header-right">
+                        <button id="btnAdaptacion" class="btn-adaptacion" onclick="toggleAdaptacion()">
+                            <span id="adaptacionIcon">✓</span>
+                            <span id="adaptacionTexto">Adaptación Activa</span>
+                        </button>
+                        <div class="company-info">
+                            <div class="company-name">J & Y NEGOCIOS S.A.C.</div>
+                            <div class="company-id">20608507371</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -646,9 +688,15 @@
                         <span style="font-weight: 600;">Wally</span>
                         <span style="font-size: 14px; color: #6b7280;">Plan Crece</span>
                     </div>
-                    <div class="company-info">
-                        <div class="company-name">J & Y NEGOCIOS S.A.C.</div>
-                        <div class="company-id">20608507371</div>
+                    <div class="header-right">
+                        <button id="btnAdaptacion2" class="btn-adaptacion" onclick="toggleAdaptacion()">
+                            <span id="adaptacionIcon2">✓</span>
+                            <span id="adaptacionTexto2">Adaptación Activa</span>
+                        </button>
+                        <div class="company-info">
+                            <div class="company-name">J & Y NEGOCIOS S.A.C.</div>
+                            <div class="company-id">20608507371</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -921,6 +969,87 @@
             goToMain();
             renderCart();
         }
+
+        // Funciones para manejar adaptación
+        function cargarEstadoAdaptacion() {
+            fetch('/api/estado-adaptacion')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'ok') {
+                        actualizarBotonAdaptacion(data.adaptacion_activa);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al cargar estado de adaptación:', error);
+                });
+        }
+
+        function actualizarBotonAdaptacion(activa) {
+            const btn = document.getElementById('btnAdaptacion');
+            const icon = document.getElementById('adaptacionIcon');
+            const texto = document.getElementById('adaptacionTexto');
+            const btn2 = document.getElementById('btnAdaptacion2');
+            const icon2 = document.getElementById('adaptacionIcon2');
+            const texto2 = document.getElementById('adaptacionTexto2');
+            
+            if (activa) {
+                if (btn) { btn.classList.remove('desactivada'); }
+                if (icon) { icon.textContent = '✓'; }
+                if (texto) { texto.textContent = 'Adaptación Activa'; }
+                if (btn2) { btn2.classList.remove('desactivada'); }
+                if (icon2) { icon2.textContent = '✓'; }
+                if (texto2) { texto2.textContent = 'Adaptación Activa'; }
+            } else {
+                if (btn) { btn.classList.add('desactivada'); }
+                if (icon) { icon.textContent = '✗'; }
+                if (texto) { texto.textContent = 'Adaptación Desactivada'; }
+                if (btn2) { btn2.classList.add('desactivada'); }
+                if (icon2) { icon2.textContent = '✗'; }
+                if (texto2) { texto2.textContent = 'Adaptación Desactivada'; }
+            }
+        }
+
+        function toggleAdaptacion() {
+            fetch('/api/estado-adaptacion')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'ok') {
+                        const nuevoEstado = !data.adaptacion_activa;
+                        
+                        fetch('/api/toggle-adaptacion', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ activar: nuevoEstado })
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.status === 'ok') {
+                                actualizarBotonAdaptacion(result.adaptacion_activa);
+                                
+                                // Si se desactiva, redirigir a original
+                                if (!result.adaptacion_activa) {
+                                    setTimeout(() => {
+                                        window.location.href = '/original';
+                                    }, 500);
+                                }
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error al cambiar estado:', error);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al obtener estado:', error);
+                });
+        }
+
+        // Cargar estado al iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarEstadoAdaptacion();
+        });
     </script>
     <script src="{{ url_for('static', filename='scripts.js') }}"></script>
 </body>

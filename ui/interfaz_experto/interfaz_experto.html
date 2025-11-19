@@ -106,6 +106,36 @@
             gap: 12px;
         }
 
+        .btn-adaptacion {
+            padding: 8px 16px;
+            border: 2px solid #4CAF50;
+            border-radius: 6px;
+            background: white;
+            color: #4CAF50;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-adaptacion:hover {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-adaptacion.desactivada {
+            border-color: #f44336;
+            color: #f44336;
+        }
+
+        .btn-adaptacion.desactivada:hover {
+            background: #f44336;
+            color: white;
+        }
+
         .help-button {
             background: #10b981;
             color: white;
@@ -421,6 +451,10 @@
                     <span style="font-size: 13px; color: #6b7280;">Plan Crece</span>
                 </div>
                 <div class="header-right">
+                    <button id="btnAdaptacion" class="btn-adaptacion" onclick="toggleAdaptacion()">
+                        <span id="adaptacionIcon">✓</span>
+                        <span id="adaptacionTexto">Adaptación Activa</span>
+                    </button>
                     <button class="help-button">
                         ? ¡Ayuda!
                     </button>
@@ -775,6 +809,79 @@
         }
 
         loadCart();
+        // Funciones para manejar adaptación
+        function cargarEstadoAdaptacion() {
+            fetch('/api/estado-adaptacion')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'ok') {
+                        actualizarBotonAdaptacion(data.adaptacion_activa);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al cargar estado de adaptación:', error);
+                });
+        }
+
+        function actualizarBotonAdaptacion(activa) {
+            const btn = document.getElementById('btnAdaptacion');
+            const icon = document.getElementById('adaptacionIcon');
+            const texto = document.getElementById('adaptacionTexto');
+            
+            if (btn && icon && texto) {
+                if (activa) {
+                    btn.classList.remove('desactivada');
+                    icon.textContent = '✓';
+                    texto.textContent = 'Adaptación Activa';
+                } else {
+                    btn.classList.add('desactivada');
+                    icon.textContent = '✗';
+                    texto.textContent = 'Adaptación Desactivada';
+                }
+            }
+        }
+
+        function toggleAdaptacion() {
+            fetch('/api/estado-adaptacion')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'ok') {
+                        const nuevoEstado = !data.adaptacion_activa;
+                        
+                        fetch('/api/toggle-adaptacion', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ activar: nuevoEstado })
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.status === 'ok') {
+                                actualizarBotonAdaptacion(result.adaptacion_activa);
+                                
+                                // Si se desactiva, redirigir a original
+                                if (!result.adaptacion_activa) {
+                                    setTimeout(() => {
+                                        window.location.href = '/original';
+                                    }, 500);
+                                }
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error al cambiar estado:', error);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al obtener estado:', error);
+                });
+        }
+
+        // Cargar estado al iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarEstadoAdaptacion();
+        });
     </script>
     <script src="{{ url_for('static', filename='scripts.js') }}"></script>
 </body>

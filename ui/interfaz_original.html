@@ -25,12 +25,48 @@
             justify-content: space-between;
         }
 
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
         .logo {
             display: flex;
             align-items: center;
             gap: 10px;
             font-size: 20px;
             font-weight: 600;
+        }
+
+        .btn-adaptacion {
+            padding: 8px 16px;
+            border: 2px solid #4CAF50;
+            border-radius: 6px;
+            background: white;
+            color: #4CAF50;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-adaptacion:hover {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-adaptacion.desactivada {
+            border-color: #f44336;
+            color: #f44336;
+        }
+
+        .btn-adaptacion.desactivada:hover {
+            background: #f44336;
+            color: white;
         }
 
         .logo-icon {
@@ -370,7 +406,13 @@
             <span>wally</span>
             <span style="color: #666; font-weight: 400;">Plan Crece</span>
         </div>
-        <div style="color: #4CAF50; font-weight: 500;">¡Ayuda!</div>
+        <div class="header-right">
+            <button id="btnAdaptacion" class="btn-adaptacion" onclick="toggleAdaptacion()">
+                <span id="adaptacionIcon">✓</span>
+                <span id="adaptacionTexto">Adaptación Activa</span>
+            </button>
+            <div style="color: #4CAF50; font-weight: 500;">¡Ayuda!</div>
+        </div>
     </div>
 
     <div class="company-info">
@@ -685,6 +727,77 @@
                 };
             }
         }
+        // Funciones para manejar adaptación
+        function cargarEstadoAdaptacion() {
+            fetch('/api/estado-adaptacion')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'ok') {
+                        actualizarBotonAdaptacion(data.adaptacion_activa);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al cargar estado de adaptación:', error);
+                });
+        }
+
+        function actualizarBotonAdaptacion(activa) {
+            const btn = document.getElementById('btnAdaptacion');
+            const icon = document.getElementById('adaptacionIcon');
+            const texto = document.getElementById('adaptacionTexto');
+            
+            if (btn && icon && texto) {
+                if (activa) {
+                    btn.classList.remove('desactivada');
+                    icon.textContent = '✓';
+                    texto.textContent = 'Adaptación Activa';
+                } else {
+                    btn.classList.add('desactivada');
+                    icon.textContent = '✗';
+                    texto.textContent = 'Adaptación Desactivada';
+                }
+            }
+        }
+
+        function toggleAdaptacion() {
+            fetch('/api/estado-adaptacion')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'ok') {
+                        const nuevoEstado = !data.adaptacion_activa;
+                        
+                        fetch('/api/toggle-adaptacion', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ activar: nuevoEstado })
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.status === 'ok') {
+                                actualizarBotonAdaptacion(result.adaptacion_activa);
+                                
+                                // Si se activa, quedarse en original (no evaluar hasta nueva actividad)
+                                if (result.adaptacion_activa) {
+                                    console.log('✅ Adaptación activada. El sistema evaluará al completar la próxima venta.');
+                                }
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error al cambiar estado:', error);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al obtener estado:', error);
+                });
+        }
+
+        // Cargar estado al iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarEstadoAdaptacion();
+        });
     </script>
     <script src="{{ url_for('static', filename='scripts.js') }}"></script>
 </body>
